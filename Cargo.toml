@@ -1,0 +1,34 @@
+[package]
+name = "h3o-cli"
+version = "0.1.0"
+authors = ["Sylvain Laperche <sylvain.laperche@gmail.com>"]
+edition = "2021"
+description = "A CLI app that exposes most of the h3o API for scripting."
+documentation = "https://docs.rs/h3o-cli/"
+readme = "README.md"
+homepage = "https://docs.rs/h3o-cli"
+repository = "https://github.com/HydroniumLabs/h3o-cli"
+license = "BSD-3-Clause"
+keywords = ["geography", "geospatial", "gis", "h3", "spatial-index"]
+categories = ["science"]
+
+[package.metadata.release]
+pre-release-commit-message = "release {{version}}"
+pre-release-replacements = [
+  {file="CHANGELOG.md", search="Unreleased", replace="{{version}}", min=1},
+  {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}", min=1},
+  {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly=1},
+]
+
+[dependencies]
+anyhow = { version = "1.0", default-features = false, features = ["std"]}
+clap = { version = "4.0.30", default-features = false, features = ["std", "color", "help", "usage", "error-context", "suggestions", "derive"] }
+geojson = { version = "0.24", default-features = false, features = ["geo-types"] }
+h3o = { git = "ssh://git@github.com/HydroniumLabs/h3o", default-features = false, features = ["geo", "serde"] }
+kml = { version = "0.6", default-features = false, features = ["geo-types"]}
+maplit = { version = "1.0", default-features = false }
+serde = { version = "1.0", default-features = false }
+serde_json = { version = "1.0", default-features = false }
+
+[profile.release]
+strip = true
