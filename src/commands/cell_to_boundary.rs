@@ -1,11 +1,10 @@
 //! Expose [`CellIndex::boundary`]
 
-use anyhow::{Context, Result as AnyResult};
+use anyhow::Result as AnyResult;
 use clap::{Parser, ValueEnum};
 use geojson::{FeatureCollection, GeoJson};
 use h3o::CellIndex;
 use kml::Kml;
-use std::io;
 
 /// Converts indexes to latitude/longitude cell boundaries in degrees.
 ///
@@ -31,26 +30,11 @@ enum Format {
 
 /// Run the `cellToBoundary` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let mut indexes = Vec::new();
-
-    if let Some(index) = args.index {
-        indexes.push(index);
+    let indexes = if let Some(index) = args.index {
+        vec![index]
     } else {
-        let mut input = String::new();
-        loop {
-            if io::stdin()
-                .read_line(&mut input)
-                .context("read line from stdin")?
-                == 0
-            {
-                break;
-            }
-            indexes.push(input.trim_end().parse().with_context(|| {
-                format!("cannot parse {input} as CellIndex")
-            })?);
-            input.clear();
-        }
-    }
+        crate::io::read_cell_indexes()?
+    };
     print_cell_boundaries(&indexes, args.format)?;
 
     Ok(())

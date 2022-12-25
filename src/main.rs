@@ -14,6 +14,7 @@ pub struct Args {
 enum Command {
     CellToBoundary(commands::cell_to_boundary::Args),
     CellToChildren(commands::cell_to_children::Args),
+    CellToLatLng(commands::cell_to_latlng::Args),
 }
 
 fn main() -> AnyResult<()> {
@@ -23,6 +24,9 @@ fn main() -> AnyResult<()> {
         }
         Command::CellToChildren(args) => {
             commands::cell_to_children::run(&args)?;
+        }
+        Command::CellToLatLng(args) => {
+            commands::cell_to_latlng::run(&args)?;
         }
     };
 

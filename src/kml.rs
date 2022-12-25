@@ -1,5 +1,6 @@
 use anyhow::{Context, Result as AnyResult};
-use h3o::{geom::ToGeo, CellIndex};
+use geo_types::coord;
+use h3o::{geom::ToGeo, CellIndex, LatLng};
 use kml::{Kml, KmlDocument, KmlWriter};
 use maplit::hashmap;
 use std::io;
@@ -22,6 +23,31 @@ pub fn boundaries(indexes: &[CellIndex], style: &str) -> Vec<Kml> {
                     "styleUrl".to_owned() => format!("#{style}"),
                 },
                 geometry: Some(kml::types::Geometry::LineString(geometry)),
+                ..kml::types::Placemark::default()
+            };
+            Kml::Placemark(placemark)
+        })
+        .collect()
+}
+
+/// Return KML Placemarks representing the indexes centers.
+pub fn centers(indexes: &[CellIndex], style: &str) -> Vec<Kml> {
+    indexes
+        .iter()
+        .copied()
+        .map(|index| {
+            let ll = LatLng::from(index);
+            let geometry = kml::types::Point {
+                coord: coord! {x: ll.lng_degrees(), y: ll.lat_degrees()}.into(),
+                altitude_mode: kml::types::AltitudeMode::RelativeToGround,
+                ..kml::types::Point::default()
+            };
+            let placemark = kml::types::Placemark {
+                name: Some(index.to_string()),
+                attrs: hashmap! {
+                    "styleUrl".to_owned() => format!("#{style}"),
+                },
+                geometry: Some(kml::types::Geometry::Point(geometry)),
                 ..kml::types::Placemark::default()
             };
             Kml::Placemark(placemark)

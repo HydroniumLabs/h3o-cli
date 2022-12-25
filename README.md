@@ -56,3 +56,27 @@ Outputs the cell boundaries of all of the resolution 4 descendants of cell
 h3o-cli cellToChildren --parent 820ceffffffffff --resolution 4 \
     | h3o-cli cellToBoundary -f kml > cells.kml
 ```
+
+## cellToLatLng
+
+Converts an index into its descendants.
+
+Outputs plain text cell center points for the H3 indexes contained in the file
+`indexes.txt`
+```text
+h3o-cli cellToLatLng < indexes.txt
+```
+
+Creates the KML file `cells.kml` containing the cell center points for all of
+the H3 indexes contained in the file `indexes.txt`.
+```text
+ h3o-cli cellToLatLng -f kml < indexes.txt > cells.kml
+```
+
+Creates a GeoJSON file containing the cell center points of all of the
+resolution 9 hexagons covering Uber HQ and the surrounding region of
+San Francisco.
+```text
+h3o-cli cellToChildren --parent 86283082fffffff --resolution 9 \
+    | h3o-cli cellToLatLng -f geojson > uber9pts.geojson
+```

@@ -110,5 +110,6 @@
 
 pub mod commands;
 mod geojson;
+mod io;
 mod json;
 mod kml;

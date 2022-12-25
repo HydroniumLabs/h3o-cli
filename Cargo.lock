@@ -247,6 +247,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "geo-types",
  "geojson",
  "h3o",
  "kml",
