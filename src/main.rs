@@ -16,6 +16,7 @@ enum Command {
     CellToChildren(commands::cell_to_children::Args),
     CellToLatLng(commands::cell_to_latlng::Args),
     CellToLocalIj(commands::cell_to_local_ij::Args),
+    GridDisk(commands::grid_disk::Args),
 }
 
 fn main() -> AnyResult<()> {
@@ -31,6 +32,9 @@ fn main() -> AnyResult<()> {
         }
         Command::CellToLocalIj(args) => {
             commands::cell_to_local_ij::run(&args)?;
+        }
+        Command::GridDisk(args) => {
+            commands::grid_disk::run(&args)?;
         }
     };
 

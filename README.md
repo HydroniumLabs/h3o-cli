@@ -95,3 +95,17 @@ Returns `"NA"` (`null` in JSON) when the coordinates cannot be computed.
 ```text
 h3o-cli cellToLocalIj -o 861fb4667ffffff -i 86283082fffffff
 ```
+
+## gridDisk
+
+Print cell indexes `radius` distance away from the origin.
+
+Print the indexes from the 2-ring around `89283082ed7ffff`.
+```text
+h3o-cli gridDisk -o 89283082ed7ffff -r 2
+```
+
+You can also print the distances of each indexes from the origin.
+```text
+h3o-cli gridDisk -r 3 -f json -d < cells.txt
+```
