@@ -123,6 +123,22 @@ You can also print the distances of each indexes from the origin.
 h3o-cli gridDisk -r 3 -f json -d < cells.txt
 ```
 
+## gridPath
+
+Compute the path between 2 or more cell indexes.
+
+If `source` and `destination` are provided, compute the path between those two
+indexes.
+```text
+h3o-cli gridPath -s 8b1fb46622d8fff -d 8b1fb4644920fff
+```
+
+The command can also read indexes from stdin where each pairs represent a
+segment of a path.
+```text
+h3o-cli gridPath < cells.txt
+```
+
 ## indexDecode
 
 Decode h3o indexes into components.

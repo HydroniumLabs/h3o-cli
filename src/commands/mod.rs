@@ -6,5 +6,6 @@ pub mod cell_to_children;
 pub mod cell_to_latlng;
 pub mod cell_to_local_ij;
 pub mod grid_disk;
+pub mod grid_path;
 pub mod index_decode;
 pub mod latlng_to_cell;

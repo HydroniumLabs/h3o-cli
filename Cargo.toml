@@ -23,6 +23,7 @@ pre-release-replacements = [
 [dependencies]
 anyhow = { version = "1.0", default-features = false, features = ["std"]}
 clap = { version = "4.0.30", default-features = false, features = ["std", "color", "help", "usage", "error-context", "suggestions", "derive"] }
+either = { version = "1.0", default-features = false }
 geojson = { version = "0.24", default-features = false, features = ["geo-types"] }
 geo-types = { version = "0.7", default-features = false }
 h3o = { git = "ssh://git@github.com/HydroniumLabs/h3o", default-features = false, features = ["geo", "serde"] }
