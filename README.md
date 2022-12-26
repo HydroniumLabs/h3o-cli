@@ -80,3 +80,18 @@ San Francisco.
 h3o-cli cellToChildren --parent 86283082fffffff --resolution 9 \
     | h3o-cli cellToLatLng -f geojson > uber9pts.geojson
 ```
+
+## cellToLocalIj
+
+Converts indexes to local IJ coordinates.
+
+Get the local IJ coordinates, anchored at `8f1fb46622d8591`, of
+`8f1fb464492001a`.
+```text
+h3o-cli cellToLocalIj -o 8f1fb46622d8591 -i 8f1fb464492001a
+```
+
+Returns `"NA"` (`null` in JSON) when the coordinates cannot be computed.
+```text
+h3o-cli cellToLocalIj -o 861fb4667ffffff -i 86283082fffffff
+```

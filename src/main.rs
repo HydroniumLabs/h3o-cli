@@ -15,6 +15,7 @@ enum Command {
     CellToBoundary(commands::cell_to_boundary::Args),
     CellToChildren(commands::cell_to_children::Args),
     CellToLatLng(commands::cell_to_latlng::Args),
+    CellToLocalIj(commands::cell_to_local_ij::Args),
 }
 
 fn main() -> AnyResult<()> {
@@ -27,6 +28,9 @@ fn main() -> AnyResult<()> {
         }
         Command::CellToLatLng(args) => {
             commands::cell_to_latlng::run(&args)?;
+        }
+        Command::CellToLocalIj(args) => {
+            commands::cell_to_local_ij::run(&args)?;
         }
     };
 
