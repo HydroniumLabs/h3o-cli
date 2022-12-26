@@ -128,3 +128,18 @@ Last but not least, JSON output is also supported.
 ```text
 h3o-cli indexDecode --format json < cells.txt
 ```
+
+# latLngToCell
+
+Converts from lat/lng coordinates to cell indexes.
+
+Get the cell index that contains the given coordinate at resolution 11.
+```text
+h3o-cli latLngToCell -r 11 --lat 48.85455798312344 --lng 2.3730553730188952
+```
+
+You can also provide a list of coordinate (one per line, latitude first then
+longitude after a single space).
+```text
+h3o-cli latLngToCell -r 11 -f json < coords.txt
+```
