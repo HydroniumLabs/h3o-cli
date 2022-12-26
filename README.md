@@ -109,6 +109,16 @@ Returns `"NA"` (`null` in JSON) when the coordinates cannot be computed.
 h3o-cli cellToLocalIj -o 861fb4667ffffff -i 86283082fffffff
 ```
 
+## compact
+
+Compact the given set of indexes (from stdin).
+
+All indexes must have the same resolution.
+
+```text
+h3o-cli compact < cells.txt
+```
+
 ## gridDisk
 
 Print cell indexes `radius` distance away from the origin.
