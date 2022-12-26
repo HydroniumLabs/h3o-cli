@@ -21,6 +21,19 @@ provided for your platform, then you can build `h3o-cli` from the source:
 
 Each command comes with its own help through `-h/--help`.
 
+### cellInfo
+
+Prints information (coordinates, area, …) about cell indexes.
+
+```text
+h3o-cli cellInfo -i 844c001ffffffff
+```
+
+Also work on a list of indexes from stdin:
+```text
+h3o-cli cellInfo -f json < cells.txt
+```
+
 ### cellToBoundary
 
 Converts indexes to latitude/longitude cell boundaries in degrees.

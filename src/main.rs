@@ -12,6 +12,7 @@ pub struct Args {
 #[derive(Parser, Debug)]
 #[command(rename_all = "camelCase")]
 enum Command {
+    CellInfo(commands::cell_info::Args),
     CellToBoundary(commands::cell_to_boundary::Args),
     CellToChildren(commands::cell_to_children::Args),
     CellToLatLng(commands::cell_to_latlng::Args),
@@ -23,6 +24,9 @@ enum Command {
 
 fn main() -> AnyResult<()> {
     match Args::parse().command {
+        Command::CellInfo(args) => {
+            commands::cell_info::run(&args)?;
+        }
         Command::CellToBoundary(args) => {
             commands::cell_to_boundary::run(&args)?;
         }
