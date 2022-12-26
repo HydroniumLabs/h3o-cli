@@ -94,7 +94,6 @@
     clippy::unused_peekable,
     clippy::unused_rounding,
     clippy::unwrap_used,
-    clippy::use_debug,
     clippy::use_self,
     clippy::useless_let_if_seq,
     clippy::verbose_file_reads
@@ -104,12 +103,15 @@
     clippy::non_ascii_literal,
     // Most errors are wrapped into AnyError anyway.
     clippy::missing_errors_doc,
+    // Used by some subcommands.
+    clippy::use_debug,
 )]
 
 // }}}
 
 pub mod commands;
 mod geojson;
+mod index;
 mod io;
 mod json;
 mod kml;

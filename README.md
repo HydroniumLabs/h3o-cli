@@ -109,3 +109,22 @@ You can also print the distances of each indexes from the origin.
 ```text
 h3o-cli gridDisk -r 3 -f json -d < cells.txt
 ```
+
+## indexDecode
+
+Decode h3o indexes into components.
+
+By default a compact version is printed:
+```text
+h3o-cli indexDecode -i 124734a9ffffffff
+```
+
+But a more verbose version is also available.
+```text
+h3o-cli indexDecode -i 89283082ed7ffff -f pretty
+```
+
+Last but not least, JSON output is also supported.
+```text
+h3o-cli indexDecode --format json < cells.txt
+```
