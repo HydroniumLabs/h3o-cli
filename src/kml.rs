@@ -91,3 +91,26 @@ pub fn print_document(
 
     Ok(())
 }
+
+/// Return a KML Placemark representing the indexes' polygons.
+pub fn polygons(polygons: geo_types::MultiPolygon, style: &str) -> Kml {
+    let geometries = kml::types::MultiGeometry::new(
+        polygons
+            .into_iter()
+            .map(|polygon| {
+                let mut polygon = kml::types::Polygon::from(polygon);
+                polygon.tessellate = true;
+                kml::types::Geometry::Polygon(polygon)
+            })
+            .collect(),
+    );
+
+    let placemark = kml::types::Placemark {
+        attrs: hashmap! {
+            "styleUrl".to_owned() => format!("#{style}"),
+        },
+        geometry: Some(kml::types::Geometry::MultiGeometry(geometries)),
+        ..kml::types::Placemark::default()
+    };
+    Kml::Placemark(placemark)
+}
