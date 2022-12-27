@@ -1,4 +1,4 @@
-# h3o-cli — A CLI app exposing most of the h3o API for scripting
+# h3o-cli — A CLI app exposing the h3o API for scripting
 
 ## How to install
 
@@ -17,168 +17,60 @@ provided for your platform, then you can build `h3o-cli` from the source:
 - [Install Rust](https://www.rust-lang.org/tools/install)
 - Run `cargo install h3o-cli`
 
-## Subcommands
+## Usage
 
-Each command comes with its own help through `-h/--help`.
+Each subcommand comes with its own help through `-h/--help`.
 
-### cellInfo
+There are two classes of output format for the commands:
+- text format (text and JSON)
+- geo format (KML and GeoJSON)
 
-Prints information (coordinates, area, …) about cell indexes.
+Most of the commands can either take a single input from the CLI options or a
+list of input from `stdin`.
 
+Plain text output can be directly used as input for others, allowing command
+pipelines.
+
+For geo output:
+- `cellToLatLng` returns the center (`Point`) of each index
+- `cellToBoundary` returns the outline (`LineString`) of each index
+- `cellToPolygon` returns the shape (`Polygon`) of contiguous indexes.
+
+## Examples
+
+Prints information (coordinates, area, …) about on given cell:
 ```text
 h3o-cli cellInfo -i 844c001ffffffff
 ```
 
-Also work on a list of indexes from stdin:
+Decodes an index into its components:
 ```text
-h3o-cli cellInfo -f json < cells.txt
-```
-
-### cellToBoundary
-
-Converts indexes to latitude/longitude cell boundaries in degrees.
-
-Outputs plain text boundary for the specified cell.
-```text
-h3o-cli cellToBoundary -i 85283473fffffff
-```
-
-Same, but formatted as GeoJSON.
-```text
-h3o-cli cellToBoundary -i 85283473fffffff -f geojson
-```
-
-Creates the KML file `cells.kml` containing the cell boundaries for all of the
-cell indexes contained in the file `indexes.txt`.
-```text
-h3o-cli cellToBoundary -f kml < indexes.txt > cells.kml
-```
-
-## cellToChildren
-
-Converts an index into its descendants.
-
-Outputs all of the resolution 3 descendants of cell `820ceffffffffff` as JSON.
-```text
-h3o-cli cellToChildren --parent 820ceffffffffff --resolution 3 -f json
-```
-
-Outputs the cell boundaries of all of the resolution 4 descendants of cell
-`820ceffffffffff` as a KML file (redirected to `cells.kml`).
-```text
-h3o-cli cellToChildren --parent 820ceffffffffff --resolution 4 \
-    | h3o-cli cellToBoundary -f kml > cells.kml
-```
-
-## cellToLatLng
-
-Converts an index into its descendants.
-
-Outputs plain text cell center points for the H3 indexes contained in the file
-`indexes.txt`
-```text
-h3o-cli cellToLatLng < indexes.txt
-```
-
-Creates the KML file `cells.kml` containing the cell center points for all of
-the H3 indexes contained in the file `indexes.txt`.
-```text
- h3o-cli cellToLatLng -f kml < indexes.txt > cells.kml
+h3o-cli indexDecode -i 21b1fb4644920fff
 ```
 
 Creates a GeoJSON file containing the cell center points of all of the
-resolution 9 hexagons covering Uber HQ and the surrounding region of
-San Francisco.
+resolution 9 hexagons covering Uber HQ and the surrounding region of San
+Francisco.
 ```text
 h3o-cli cellToChildren --parent 86283082fffffff --resolution 9 \
     | h3o-cli cellToLatLng -f geojson > uber9pts.geojson
 ```
 
-## cellToLocalIj
-
-Converts indexes to local IJ coordinates.
-
-Get the local IJ coordinates, anchored at `8f1fb46622d8591`, of
-`8f1fb464492001a`.
+Generates the set of indexes that cover Paris at resolution 11 and save the
+compacted result in `cells.txt`.
 ```text
-h3o-cli cellToLocalIj -o 8f1fb46622d8591 -i 8f1fb464492001a
+h3o-cli geomToCells -r 11 -f geojson < paris.geojson | h3o-cli compact > cells.txt
 ```
 
-Returns `"NA"` (`null` in JSON) when the coordinates cannot be computed.
-```text
-h3o-cli cellToLocalIj -o 861fb4667ffffff -i 86283082fffffff
-```
-
-## compact
-
-Compact the given set of indexes (from stdin).
-
-All indexes must have the same resolution.
-
-```text
-h3o-cli compact < cells.txt
-```
-
-## gridDisk
-
-Print cell indexes `radius` distance away from the origin.
-
-Print the indexes from the 2-ring around `89283082ed7ffff`.
+Prints the indexes from the 2-ring around `89283082ed7ffff`.
 ```text
 h3o-cli gridDisk -o 89283082ed7ffff -r 2
 ```
 
-You can also print the distances of each indexes from the origin.
+At resolution 7, prints the grid path that goes through a bunch of French cities
+and return the resulting KML.
 ```text
-h3o-cli gridDisk -r 3 -f json -d < cells.txt
-```
-
-## gridPath
-
-Compute the path between 2 or more cell indexes.
-
-If `source` and `destination` are provided, compute the path between those two
-indexes.
-```text
-h3o-cli gridPath -s 8b1fb46622d8fff -d 8b1fb4644920fff
-```
-
-The command can also read indexes from stdin where each pairs represent a
-segment of a path.
-```text
-h3o-cli gridPath < cells.txt
-```
-
-## indexDecode
-
-Decode h3o indexes into components.
-
-By default a compact version is printed:
-```text
-h3o-cli indexDecode -i 124734a9ffffffff
-```
-
-But a more verbose version is also available.
-```text
-h3o-cli indexDecode -i 89283082ed7ffff -f pretty
-```
-
-Last but not least, JSON output is also supported.
-```text
-h3o-cli indexDecode --format json < cells.txt
-```
-
-# latLngToCell
-
-Converts from lat/lng coordinates to cell indexes.
-
-Get the cell index that contains the given coordinate at resolution 11.
-```text
-h3o-cli latLngToCell -r 11 --lat 48.85455798312344 --lng 2.3730553730188952
-```
-
-You can also provide a list of coordinate (one per line, latitude first then
-longitude after a single space).
-```text
-h3o-cli latLngToCell -r 11 -f json < coords.txt
+h3o-cli latLngToCell -r 7 < cities-center.txt \
+    | h3o-cli gridPath \
+    | h3o-cli cellToBoundary -f kml
 ```
