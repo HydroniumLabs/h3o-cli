@@ -114,3 +114,56 @@ pub fn polygons(polygons: geo_types::MultiPolygon, style: &str) -> Kml {
     };
     Kml::Placemark(placemark)
 }
+
+/// Extract geometries from a KML element.
+pub fn to_geometry(kml: Kml) -> AnyResult<Option<geo_types::Geometry>> {
+    Ok(match kml {
+        Kml::KmlDocument(document) => {
+            Some(geo_types::Geometry::GeometryCollection(
+                geo_types::GeometryCollection(
+                    document
+                        .elements
+                        .into_iter()
+                        .filter_map(|element| to_geometry(element).transpose())
+                        .collect::<Result<Vec<_>, _>>()
+                        .context("invalid geometry in document/folder")?,
+                ),
+            ))
+        }
+        Kml::Point(point) => Some(geo_types::Geometry::Point(point.into())),
+        Kml::Location(location) => Some(geo_types::Geometry::Point(
+            (location.longitude, location.latitude).into(),
+        )),
+        Kml::LineString(line) => {
+            Some(geo_types::Geometry::LineString(line.into()))
+        }
+        Kml::LinearRing(ring) => {
+            Some(geo_types::Geometry::LineString(ring.into()))
+        }
+        Kml::Polygon(polygon) => {
+            Some(geo_types::Geometry::Polygon(polygon.into()))
+        }
+        Kml::MultiGeometry(geometries) => {
+            Some(geo_types::Geometry::GeometryCollection(
+                geometries.try_into().context("invalid multigeometry")?,
+            ))
+        }
+        Kml::Placemark(placemark) => placemark
+            .geometry
+            .map(TryInto::try_into)
+            .transpose()
+            .context("invalid geometry in placemark")?,
+        Kml::Document { elements, .. } | Kml::Folder { elements, .. } => {
+            Some(geo_types::Geometry::GeometryCollection(
+                geo_types::GeometryCollection(
+                    elements
+                        .into_iter()
+                        .filter_map(|element| to_geometry(element).transpose())
+                        .collect::<Result<Vec<_>, _>>()
+                        .context("invalid geometry in document/folder")?,
+                ),
+            ))
+        }
+        _ => None,
+    })
+}

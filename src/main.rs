@@ -19,6 +19,7 @@ enum Command {
     CellToLocalIj(commands::cell_to_local_ij::Args),
     CellToPolygon(commands::cell_to_polygon::Args),
     Compact(commands::compact::Args),
+    GeomToCells(commands::geom_to_cells::Args),
     GridDisk(commands::grid_disk::Args),
     GridPath(commands::grid_path::Args),
     IndexDecode(commands::index_decode::Args),
@@ -50,6 +51,9 @@ fn main() -> AnyResult<()> {
         }
         Command::IndexDecode(args) => {
             commands::index_decode::run(&args)?;
+        }
+        Command::GeomToCells(args) => {
+            commands::geom_to_cells::run(&args)?;
         }
         Command::GridDisk(args) => {
             commands::grid_disk::run(&args)?;

@@ -7,6 +7,7 @@ pub mod cell_to_latlng;
 pub mod cell_to_local_ij;
 pub mod cell_to_polygon;
 pub mod compact;
+pub mod geom_to_cells;
 pub mod grid_disk;
 pub mod grid_path;
 pub mod index_decode;
