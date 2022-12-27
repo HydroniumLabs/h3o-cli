@@ -39,22 +39,12 @@ pub fn run(args: &Args) -> AnyResult<()> {
     } else {
         crate::io::read_cell_indexes()?
     };
-    print_cell_local_ij(args.origin, &indexes, args.format)?;
-
-    Ok(())
-}
-
-fn print_cell_local_ij(
-    origin: CellIndex,
-    indexes: &[CellIndex],
-    format: Format,
-) -> AnyResult<()> {
     let coords = indexes
         .iter()
         .copied()
-        .map(|index| index.to_local_ij(origin).ok());
+        .map(|index| index.to_local_ij(args.origin).ok());
 
-    match format {
+    match args.format {
         Format::Text => local_ij_to_text(coords),
         Format::Json => local_ij_to_json(coords)?,
     }

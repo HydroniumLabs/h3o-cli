@@ -37,17 +37,12 @@ pub fn run(args: &Args) -> AnyResult<()> {
     } else {
         crate::io::read_cell_indexes()?
     };
-    print_cell_latlng(&indexes, args.format)?;
 
-    Ok(())
-}
-
-fn print_cell_latlng(indexes: &[CellIndex], format: Format) -> AnyResult<()> {
-    match format {
-        Format::Text => latlng_to_text(indexes),
-        Format::Json => latlng_to_json(indexes)?,
-        Format::Geojson => latlng_to_geojson(indexes),
-        Format::Kml => latlng_to_kml(indexes)?,
+    match args.format {
+        Format::Text => latlng_to_text(&indexes),
+        Format::Json => latlng_to_json(&indexes)?,
+        Format::Geojson => latlng_to_geojson(&indexes),
+        Format::Kml => latlng_to_kml(&indexes)?,
     }
 
     Ok(())

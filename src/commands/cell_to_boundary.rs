@@ -35,19 +35,11 @@ pub fn run(args: &Args) -> AnyResult<()> {
     } else {
         crate::io::read_cell_indexes()?
     };
-    print_cell_boundaries(&indexes, args.format)?;
 
-    Ok(())
-}
-
-fn print_cell_boundaries(
-    indexes: &[CellIndex],
-    format: Format,
-) -> AnyResult<()> {
-    match format {
-        Format::Text => boundaries_to_text(indexes),
-        Format::Geojson => boundaries_to_geojson(indexes),
-        Format::Kml => boundaries_to_kml(indexes)?,
+    match args.format {
+        Format::Text => boundaries_to_text(&indexes),
+        Format::Geojson => boundaries_to_geojson(&indexes),
+        Format::Kml => boundaries_to_kml(&indexes)?,
     }
 
     Ok(())
