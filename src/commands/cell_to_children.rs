@@ -3,7 +3,8 @@
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use h3o::{CellIndex, Resolution};
-use std::{cmp, io};
+use serde::Serialize;
+use std::io;
 
 /// Converts an index into its descendants.
 ///
@@ -15,7 +16,7 @@ use std::{cmp, io};
 pub struct Args {
     /// Converts descendants from this index.
     #[arg(short, long)]
-    parent: CellIndex,
+    parent: Option<CellIndex>,
 
     /// Resolution, if less than PARENT's resolution only PARENT is printed.
     #[arg(short, long, default_value_t = Resolution::Zero)]
@@ -34,20 +35,38 @@ enum Format {
 
 /// Run the `cellToChildren` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let resolution = cmp::max(args.parent.resolution(), args.resolution);
-    let indexes = args.parent.children(resolution);
+    let indexes = if let Some(index) = args.parent {
+        vec![index]
+    } else {
+        crate::io::read_cell_indexes()?
+    };
+    let indexes = indexes
+        .into_iter()
+        .map(|parent| (parent, parent.children(args.resolution)));
 
     match args.format {
         Format::Text => {
-            for index in indexes {
+            for index in indexes.flat_map(|(_, children)| children) {
                 println!("{index}");
             }
         }
         Format::Json => {
+            #[derive(Serialize)]
+            struct ParentChildren {
+                parent: crate::json::CellIndex,
+                children: Option<Vec<crate::json::CellIndex>>,
+            }
+
             let mut stdout = io::stdout().lock();
             let indexes = indexes
-                .map(Into::into)
-                .collect::<Vec<crate::json::CellIndex>>();
+                .map(|(parent, children)| {
+                    let children = children.map(Into::into).collect::<Vec<_>>();
+                    ParentChildren {
+                        parent: parent.into(),
+                        children: (!children.is_empty()).then_some(children),
+                    }
+                })
+                .collect::<Vec<_>>();
             serde_json::to_writer(&mut stdout, &indexes)
                 .context("write JSON to stdout")?;
         }
