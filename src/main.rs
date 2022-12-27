@@ -24,6 +24,7 @@ enum Command {
     GridPath(commands::grid_path::Args),
     IndexDecode(commands::index_decode::Args),
     LatLngToCell(commands::latlng_to_cell::Args),
+    ResolutionInfo(commands::resolution_info::Args),
 }
 
 fn main() -> AnyResult<()> {
@@ -63,6 +64,9 @@ fn main() -> AnyResult<()> {
         }
         Command::LatLngToCell(args) => {
             commands::latlng_to_cell::run(&args)?;
+        }
+        Command::ResolutionInfo(args) => {
+            commands::resolution_info::run(&args)?;
         }
     };
 

@@ -12,3 +12,4 @@ pub mod grid_disk;
 pub mod grid_path;
 pub mod index_decode;
 pub mod latlng_to_cell;
+pub mod resolution_info;
