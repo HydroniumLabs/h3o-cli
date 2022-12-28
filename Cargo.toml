@@ -32,5 +32,13 @@ maplit = { version = "1.0", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_json = { version = "1.0", default-features = false }
 
+[dev-dependencies]
+lit = { version = "1.0", default-features = false }
+
+[lib]
+# doctests are good for docs, but unfortunately they are slow.
+# Cf. https://matklad.github.io/2021/02/27/delete-cargo-integration-tests.html
+doctest = false
+
 [profile.release]
 strip = true

@@ -1,0 +1,7 @@
+RUN: grep '^8' @file | @cli cellToLatLng
+
+CHECK: 48.704200791 2.460495296
+8a1fb09b3837fff
+
+CHECK: 45.763202271 4.834525747
+8a1f90209317fff

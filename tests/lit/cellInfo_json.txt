@@ -1,0 +1,16 @@
+RUN: @cli cellInfo -i 8b1fb4644920fff -f json
+
+CHECK: "index": "8b1fb4644920fff"
+CHECK: "baseCell": 15
+CHECK: "resolution": 11
+CHECK: "center":
+CHECK: "area": 0.0019154904
+CHECK: "edgeLength": 0.0282827306
+CHECK: "parent": "8a1fb4644927fff"
+CHECK: "children":
+CHECK: "neighbors":
+CHECK: "vertexes":
+CHECK: "edges":
+CHECK: "faces":
+CHECK: "isPentagon": false
+CHECK: "isClass3": true

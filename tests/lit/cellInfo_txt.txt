@@ -1,0 +1,33 @@
+RUN: grep '^8' @file | @cli cellInfo
+
+CHECK: index:[[\s+]]8009fffffffffff
+CHECK: base cell:[[\s+]]4
+CHECK: resolution:[[\s+]]0
+CHECK: center:[[\s+]]64.700000128 10.536199075
+CHECK: area (km2):[[\s+]]2562182.163
+CHECK: edge length (km):[[\s+]]1215.372
+CHECK: parent:[[\s+]]N/A
+CHECK: children:
+CHECK: neighbors:
+CHECK: vertexes:
+CHECK: edges:
+CHECK: faces:[[\s+]][0, 1, 2, 3, 4]
+CHECK: isPentagon:[[\s+]]true
+CHECK: isClassIII:[[\s+]]false
+8009fffffffffff
+
+CHECK: index:[[\s+]]8f1fb46622d8591
+CHECK: base cell:[[\s+]]15
+CHECK: resolution:[[\s+]]15
+CHECK: center:[[\s+]]48.853954624 2.373200839
+CHECK: area (m2):[[\s+]]0.798
+CHECK: edge length (m):[[\s+]]0.577
+CHECK: parent:[[\s+]]8e1fb46622d8597
+CHECK: children:[[\s+]][]
+CHECK: neighbors:
+CHECK: vertexes:
+CHECK: edges:
+CHECK: faces:[[\s+]][3]
+CHECK: isPentagon:[[\s+]]false
+CHECK: isClassIII:[[\s+]]true
+8f1fb46622d8591
