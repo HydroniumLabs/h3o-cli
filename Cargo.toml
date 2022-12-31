@@ -31,6 +31,7 @@ kml = { version = "0.6", default-features = false, features = ["geo-types"]}
 maplit = { version = "1.0", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_json = { version = "1.0", default-features = false }
+thc = { git = "ssh://git@github.com/HydroniumLabs/thc", default-features = false }
 
 [dev-dependencies]
 lit = { version = "1.0", default-features = false }

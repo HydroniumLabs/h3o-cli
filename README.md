@@ -79,3 +79,15 @@ h3o-cli latLngToCell -r 7 < cities-center.txt \
     | h3o-cli gridPath \
     | h3o-cli cellToBoundary -f kml
 ```
+
+Load the shape of a city, compute the cell coverage at resolution 11 and save
+the compressed result in `city.thc`:
+```text
+h3o-cli geomToCells -r 11 < city.geojson \
+    | h3o-cli compact \
+    | ./h3o-cli compress > city.thc
+```
+
+## License
+
+[BSD 3-Clause](./LICENSE)
