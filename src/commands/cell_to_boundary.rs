@@ -1,6 +1,6 @@
 //! Expose [`CellIndex::boundary`]
 
-use anyhow::Result as AnyResult;
+use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use geojson::{FeatureCollection, GeoJson};
 use h3o::CellIndex;
@@ -19,6 +19,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (GeoJSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -30,24 +34,24 @@ enum Format {
 
 /// Run the `cellToBoundary` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
+    let indexes = crate::utils::get_cell_indexes(args.index);
 
     match args.format {
-        Format::Text => boundaries_to_text(&indexes),
-        Format::Geojson => boundaries_to_geojson(&indexes),
-        Format::Kml => boundaries_to_kml(&indexes)?,
+        Format::Text => boundaries_to_text(indexes),
+        Format::Geojson => boundaries_to_geojson(indexes, args.pretty),
+        Format::Kml => boundaries_to_kml(indexes),
     }
+    .context("cellToBoundary")?;
 
     Ok(())
 }
 
 /// Print boundaries as plain text.
-fn boundaries_to_text(indexes: &[CellIndex]) {
+fn boundaries_to_text(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+) -> AnyResult<()> {
     for index in indexes {
+        let index = index?;
         println!("{index}");
         println!("{{");
         for ll in index.boundary().iter() {
@@ -55,22 +59,31 @@ fn boundaries_to_text(indexes: &[CellIndex]) {
         }
         println!("}}");
     }
+
+    Ok(())
 }
 
 /// Print boundaries as geojson.
-fn boundaries_to_geojson(indexes: &[CellIndex]) {
-    let features = crate::geojson::boundaries(indexes);
+fn boundaries_to_geojson(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+    pretty: bool,
+) -> AnyResult<()> {
+    let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
+    let features = crate::geojson::boundaries(&indexes);
     let geojson = GeoJson::FeatureCollection(FeatureCollection {
         bbox: None,
         features,
         foreign_members: None,
     });
 
-    println!("{geojson}");
+    crate::json::print(&geojson, pretty)
 }
 
 /// Print boundaries as KML.
-fn boundaries_to_kml(indexes: &[CellIndex]) -> AnyResult<()> {
+fn boundaries_to_kml(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+) -> AnyResult<()> {
+    let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
     let style_id = "lineStyle1";
     let style = kml::types::Style {
         id: style_id.to_owned(),
@@ -84,7 +97,7 @@ fn boundaries_to_kml(indexes: &[CellIndex]) -> AnyResult<()> {
     };
 
     let mut elements = vec![Kml::Style(style)];
-    elements.append(&mut crate::kml::boundaries(indexes, style_id));
+    elements.append(&mut crate::kml::boundaries(&indexes, style_id));
 
     crate::kml::print_document(
         "H3 Geometry".to_owned(),

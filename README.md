@@ -50,7 +50,7 @@ h3o-cli cellInfo -i 844c001ffffffff
 
 Decodes an index into its components:
 ```text
-h3o-cli indexDecode -i 21b1fb4644920fff
+h3o-cli indexDecode -i 21b1fb4644920fff --pretty
 ```
 
 Creates a GeoJSON file containing the cell center points of all of the

@@ -10,7 +10,8 @@ pub struct Args;
 
 /// Run the `compact` command.
 pub fn run(_args: &Args) -> AnyResult<()> {
-    let mut indexes = crate::io::read_cell_indexes()?;
+    let mut indexes =
+        crate::io::read_cell_indexes().collect::<AnyResult<Vec<_>>>()?;
     indexes.sort_unstable();
 
     let mut stdout = io::stdout().lock();

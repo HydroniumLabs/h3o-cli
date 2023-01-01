@@ -4,7 +4,6 @@ use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use h3o::{CellIndex, LocalIJ};
 use serde::Serialize;
-use std::io;
 
 /// Converts indexes to local IJ coordinates.
 ///
@@ -24,6 +23,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -32,55 +35,56 @@ enum Format {
     Json,
 }
 
-/// Run the `cellToLatLng` command.
+/// Run the `cellToLocalIj` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
+    let indexes = crate::utils::get_cell_indexes(args.index);
     let coords = indexes
-        .iter()
-        .copied()
-        .map(|index| index.to_local_ij(args.origin).ok());
+        .map(|input| input.map(|index| index.to_local_ij(args.origin).ok()));
 
     match args.format {
         Format::Text => local_ij_to_text(coords),
-        Format::Json => local_ij_to_json(coords)?,
+        Format::Json => local_ij_to_json(coords, args.pretty),
     }
+    .context("cellToLocalIj")?;
 
     Ok(())
 }
 
 /// Print local IJ coordinates as plain text.
-fn local_ij_to_text(coords: impl IntoIterator<Item = Option<LocalIJ>>) {
+fn local_ij_to_text(
+    coords: impl IntoIterator<Item = AnyResult<Option<LocalIJ>>>,
+) -> AnyResult<()> {
     for coord in coords {
-        coord.map_or_else(
+        coord?.map_or_else(
             || println!("NA"),
             |coord| println!("{} {}", coord.i(), coord.j()),
         );
     }
+
+    Ok(())
 }
 
 /// Print local IJ coordinates as JSON.
 fn local_ij_to_json(
-    coords: impl IntoIterator<Item = Option<LocalIJ>>,
+    coords: impl IntoIterator<Item = AnyResult<Option<LocalIJ>>>,
+    pretty: bool,
 ) -> AnyResult<()> {
     #[derive(Serialize)]
     struct CoordIJ {
         i: i32,
         j: i32,
     }
-    let mut stdout = io::stdout().lock();
     let coords = coords
         .into_iter()
-        .map(|item| {
-            item.map(|coord| CoordIJ {
-                i: coord.i(),
-                j: coord.j(),
+        .map(|result| {
+            result.map(|value| {
+                value.map(|coord| CoordIJ {
+                    i: coord.i(),
+                    j: coord.j(),
+                })
             })
         })
-        .collect::<Vec<_>>();
+        .collect::<AnyResult<Vec<_>>>()?;
 
-    serde_json::to_writer(&mut stdout, &coords).context("write JSON to stdout")
+    crate::json::print(&coords, pretty)
 }

@@ -10,6 +10,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -33,13 +37,11 @@ pub fn run(args: &Args) -> AnyResult<()> {
             }
         }
         Format::Json => {
-            let mut stdout = io::stdout().lock();
             let indexes = indexes
                 .map(|index| index.map(Into::into))
                 .collect::<Result<Vec<crate::json::CellIndex>, _>>()
                 .context("decompress")?;
-            serde_json::to_writer(&mut stdout, &indexes)
-                .context("write JSON to stdout")?;
+            crate::json::print(&indexes, args.pretty)?;
         }
     }
 

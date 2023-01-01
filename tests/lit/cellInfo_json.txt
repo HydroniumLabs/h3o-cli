@@ -1,4 +1,4 @@
-RUN: @cli cellInfo -i 8b1fb4644920fff -f json
+RUN: @cli cellInfo -i 8b1fb4644920fff -f json -p
 
 CHECK: "index": "8b1fb4644920fff"
 CHECK: "baseCell": 15

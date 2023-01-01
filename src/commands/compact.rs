@@ -3,7 +3,6 @@
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use h3o::CellIndex;
-use std::io;
 
 /// Compact the given set of indexes (from stdin).
 ///
@@ -13,6 +12,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -23,7 +26,8 @@ enum Format {
 
 /// Run the `compact` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = crate::io::read_cell_indexes()?;
+    let indexes =
+        crate::io::read_cell_indexes().collect::<AnyResult<Vec<_>>>()?;
 
     let compacted = CellIndex::compact(indexes).context("compaction")?;
     match args.format {
@@ -33,13 +37,11 @@ pub fn run(args: &Args) -> AnyResult<()> {
             }
         }
         Format::Json => {
-            let mut stdout = io::stdout().lock();
             let compacted = compacted
                 .into_iter()
                 .map(Into::into)
                 .collect::<Vec<crate::json::CellIndex>>();
-            serde_json::to_writer(&mut stdout, &compacted)
-                .context("write JSON to stdout")?;
+            crate::json::print(&compacted, args.pretty)?;
         }
     }
 

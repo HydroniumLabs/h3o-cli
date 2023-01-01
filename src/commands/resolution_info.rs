@@ -1,10 +1,10 @@
 //! Expose resolution information.
 
-use anyhow::{Context, Result as AnyResult};
+use anyhow::Result as AnyResult;
 use clap::{Parser, ValueEnum};
 use h3o::Resolution;
 use serde::Serialize;
-use std::{fmt, io};
+use std::fmt;
 
 /// Print cell statistics per resolution.
 #[derive(Parser, Debug)]
@@ -16,6 +16,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -30,10 +34,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
         let info = ResolutionInfo::from(resolution);
         match args.format {
             Format::Text => println!("{info}"),
-            Format::Json => {
-                serde_json::to_writer(&mut io::stdout(), &info)
-                    .context("write JSON to stdout")?;
-            }
+            Format::Json => crate::json::print(&info, args.pretty)?,
         }
         return Ok(());
     }
@@ -79,8 +80,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
                 Resolution::range(Resolution::Zero, Resolution::Fifteen)
                     .map(Into::into)
                     .collect::<Vec<ResolutionInfo>>();
-            serde_json::to_writer(&mut io::stdout(), &infos)
-                .context("write JSON to stdout")?;
+            crate::json::print(&infos, args.pretty)?;
         }
     }
 

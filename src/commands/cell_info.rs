@@ -1,10 +1,10 @@
 //! Expose cell index information.
 
-use anyhow::{Context, Result as AnyResult};
+use anyhow::Result as AnyResult;
 use clap::{Parser, ValueEnum};
 use h3o::{BaseCell, CellIndex, Face, LatLng, Resolution};
 use serde::Serialize;
-use std::{fmt, io};
+use std::fmt;
 
 /// Print a bunch of info on a cell index.
 #[derive(Parser, Debug)]
@@ -16,6 +16,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -26,27 +30,18 @@ enum Format {
 
 /// Run the `cellInfo` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
-
-    let infos = indexes
-        .into_iter()
-        .map(Into::into)
-        .collect::<Vec<CellInfo>>();
+    let indexes = crate::utils::get_cell_indexes(args.index);
+    let infos = indexes.map(|input| input.map(CellInfo::from));
 
     match args.format {
         Format::Text => {
             for info in infos {
-                println!("{info}");
+                println!("{}", info?);
             }
         }
         Format::Json => {
-            let mut stdout = io::stdout().lock();
-            serde_json::to_writer_pretty(&mut stdout, &infos)
-                .context("write JSON to stdout")?;
+            let infos = infos.collect::<AnyResult<Vec<_>>>()?;
+            crate::json::print(&infos, args.pretty)?;
         }
     }
 
@@ -78,6 +73,7 @@ impl From<CellIndex> for CellInfo {
     fn from(value: CellIndex) -> Self {
         let edges = value.edges().collect::<Vec<_>>();
         let ll = LatLng::from(value);
+
         Self {
             index: value.to_string(),
             base_cell: value.base_cell(),

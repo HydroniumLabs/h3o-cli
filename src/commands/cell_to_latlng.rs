@@ -5,7 +5,6 @@ use clap::{Parser, ValueEnum};
 use geojson::{FeatureCollection, GeoJson};
 use h3o::{CellIndex, LatLng};
 use kml::Kml;
-use std::io;
 
 /// Converts indexes to latitude/longitude center coordinates in degrees.
 ///
@@ -20,6 +19,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output.
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -32,56 +35,65 @@ enum Format {
 
 /// Run the `cellToLatLng` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
+    let indexes = crate::utils::get_cell_indexes(args.index);
 
     match args.format {
-        Format::Text => latlng_to_text(&indexes),
-        Format::Json => latlng_to_json(&indexes)?,
-        Format::Geojson => latlng_to_geojson(&indexes),
-        Format::Kml => latlng_to_kml(&indexes)?,
+        Format::Text => latlng_to_text(indexes),
+        Format::Json => latlng_to_json(indexes, args.pretty),
+        Format::Geojson => latlng_to_geojson(indexes, args.pretty),
+        Format::Kml => latlng_to_kml(indexes),
     }
+    .context("cellToLatLng")?;
 
     Ok(())
 }
 
 /// Print lat/lng as plain text.
-fn latlng_to_text(indexes: &[CellIndex]) {
-    for ll in indexes.iter().copied().map(LatLng::from) {
+fn latlng_to_text(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+) -> AnyResult<()> {
+    for ll in indexes.into_iter().map(|input| input.map(LatLng::from)) {
+        let ll = ll?;
         println!("{:.9} {:.9}", ll.lat_degrees(), ll.lng_degrees());
     }
+
+    Ok(())
 }
 
 /// Print lat/lng as JSON.
-fn latlng_to_json(indexes: &[CellIndex]) -> AnyResult<()> {
-    let mut stdout = io::stdout().lock();
+fn latlng_to_json(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+    pretty: bool,
+) -> AnyResult<()> {
     let coords = indexes
-        .iter()
-        .copied()
-        .map(LatLng::from)
-        .collect::<Vec<_>>();
+        .into_iter()
+        .map(|input| input.map(LatLng::from))
+        .collect::<AnyResult<Vec<_>>>()?;
 
-    serde_json::to_writer_pretty(&mut stdout, &coords)
-        .context("write JSON to stdout")
+    crate::json::print(&coords, pretty)
 }
 
 /// Print lat/lng as geojson.
-fn latlng_to_geojson(indexes: &[CellIndex]) {
-    let features = crate::geojson::centers(indexes);
+fn latlng_to_geojson(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+    pretty: bool,
+) -> AnyResult<()> {
+    let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
+    let features = crate::geojson::centers(&indexes);
     let geojson = GeoJson::FeatureCollection(FeatureCollection {
         bbox: None,
         features,
         foreign_members: None,
     });
 
-    println!("{geojson}");
+    crate::json::print(&geojson, pretty)
 }
 
 /// Print lat/lng as KML.
-fn latlng_to_kml(indexes: &[CellIndex]) -> AnyResult<()> {
+fn latlng_to_kml(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+) -> AnyResult<()> {
+    let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
     // Define styles.
     let style = kml::types::Style {
         id: "s_circle".to_owned(),
@@ -144,7 +156,7 @@ fn latlng_to_kml(indexes: &[CellIndex]) -> AnyResult<()> {
         Kml::Style(style_hl),
         Kml::StyleMap(style_map),
     ];
-    elements.append(&mut crate::kml::centers(indexes, style_id));
+    elements.append(&mut crate::kml::centers(&indexes, style_id));
 
     crate::kml::print_document(
         "H3 Geometry".to_owned(),

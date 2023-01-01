@@ -4,7 +4,6 @@ use anyhow::{ensure, Context, Result as AnyResult};
 use clap::{ArgGroup, Parser, ValueEnum};
 use either::Either;
 use h3o::CellIndex;
-use std::{collections::HashSet, io};
 
 /// Compute the path between the given cell indexes.
 #[derive(Parser, Debug)]
@@ -25,6 +24,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -39,18 +42,19 @@ pub fn run(args: &Args) -> AnyResult<()> {
         if let (Some(src), Some(dst)) = (args.source, args.destination) {
             vec![src, dst]
         } else {
-            crate::io::read_cell_indexes()?
+            crate::io::read_cell_indexes().collect::<AnyResult<Vec<_>>>()?
         };
     ensure!(indexes.len() >= 2, "not enough cell indexes");
 
-    let path = indexes
+    let mut path = indexes
         .windows(2)
         .flat_map(|segment| match segment[0].grid_path_cells(segment[1]) {
             Ok(iter) => Either::Right(iter),
             Err(err) => Either::Left(std::iter::once(Err(err))),
         })
-        .collect::<Result<HashSet<_>, _>>()
+        .collect::<Result<Vec<_>, _>>()
         .context("compute paths")?;
+    path.dedup();
 
     match args.format {
         Format::Text => {
@@ -59,13 +63,11 @@ pub fn run(args: &Args) -> AnyResult<()> {
             }
         }
         Format::Json => {
-            let mut stdout = io::stdout().lock();
             let path = path
                 .into_iter()
                 .map(Into::into)
                 .collect::<Vec<crate::json::CellIndex>>();
-            serde_json::to_writer(&mut stdout, &path)
-                .context("write JSON to stdout")?;
+            crate::json::print(&path, args.pretty)?;
         }
     }
 

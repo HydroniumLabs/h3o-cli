@@ -1,8 +1,8 @@
 //! Expose [`LatLng::to_cell`]
 use anyhow::{Context, Result as AnyResult};
 use clap::{ArgGroup, Parser, ValueEnum};
+use either::Either;
 use h3o::{LatLng, Resolution};
-use std::io;
 
 /// Converts from lat/lng coordinates to cell indexes.
 ///
@@ -31,6 +31,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -41,26 +45,28 @@ enum Format {
 
 /// Run the `latLngToCell` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let coords = if let (Some(lat), Some(lng)) = (args.lat, args.lng) {
-        vec![LatLng::from_degrees(lat, lng)?]
+    let indexes = if let (Some(lat), Some(lng)) = (args.lat, args.lng) {
+        Either::Left(std::iter::once(
+            LatLng::from_degrees(lat, lng).context("invalid lat/lng"),
+        ))
     } else {
-        crate::io::read_coords()?
-    };
+        Either::Right(crate::io::read_coords())
+    }
+    .map(|input| input.map(|ll| ll.to_cell(args.resolution)));
 
-    let indexes = coords.into_iter().map(|ll| ll.to_cell(args.resolution));
     match args.format {
         Format::Text => {
             for index in indexes {
-                println!("{index}");
+                println!("{}", index?);
             }
         }
         Format::Json => {
-            let mut stdout = io::stdout().lock();
             let indexes = indexes
-                .map(Into::into)
-                .collect::<Vec<crate::json::CellIndex>>();
-            serde_json::to_writer(&mut stdout, &indexes)
-                .context("write JSON to stdout")?;
+                .map(|result| result.map(Into::into))
+                .collect::<AnyResult<Vec<crate::json::CellIndex>>>(
+            )?;
+
+            crate::json::print(&indexes, args.pretty)?;
         }
     }
 

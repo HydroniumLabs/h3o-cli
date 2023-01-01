@@ -1,2 +1,2 @@
-RUN: @cli cellToChildren -p 89283082ed7ffff -r 11 | @cli compress | @cli decompress | @cli compact
+RUN: @cli cellToChildren -a 89283082ed7ffff -r 11 | @cli compress | @cli decompress | @cli compact
 CHECK: 89283082ed7ffff

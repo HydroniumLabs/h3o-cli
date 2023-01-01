@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
-use geojson::{Feature, GeoJson};
+use geojson::Feature;
 use h3o::{geom::ToGeo, CellIndex};
 use kml::Kml;
 
@@ -18,6 +18,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Geojson)]
     format: Format,
+
+    /// Prettify the output (GeoJSON only)
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -28,11 +32,8 @@ enum Format {
 
 /// Run the `cellToPolygon` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
+    let indexes = crate::utils::get_cell_indexes(args.index)
+        .collect::<AnyResult<Vec<_>>>()?;
 
     match args.format {
         Format::Geojson => {
@@ -44,7 +45,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
                 properties: None,
                 foreign_members: None,
             };
-            println!("{}", GeoJson::Feature(feature));
+            crate::json::print(&feature, args.pretty)?;
         }
         Format::Kml => {
             let style_id = "lineStyle1";

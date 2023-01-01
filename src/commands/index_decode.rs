@@ -3,9 +3,9 @@
 use crate::index::Index;
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
+use either::Either;
 use h3o::{BaseCell, Direction, Edge, IndexMode, Resolution, Vertex};
 use serde::Serialize;
-use std::io;
 
 /// Decode h3o indexes into components
 #[derive(Parser, Debug)]
@@ -15,40 +15,50 @@ pub struct Args {
     index: Option<Index>,
 
     /// Output format.
-    #[arg(short, long, value_enum, default_value_t = Format::Compact)]
+    #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output.
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
 enum Format {
-    Compact,
-    Pretty,
+    Text,
     Json,
 }
 
 /// Run the `indexDecode` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.index {
-        vec![index]
-    } else {
-        crate::io::read_indexes().context("read Index from stdin")?
-    };
+    let components = args
+        .index
+        .map_or_else(
+            || Either::Right(crate::io::read_indexes()),
+            |index| Either::Left(std::iter::once(Ok(index))),
+        )
+        .map(|input| input.map(Components::from));
 
-    let components = indexes
-        .into_iter()
-        .map(Into::into)
-        .collect::<Vec<Components>>();
     match args.format {
-        Format::Compact => components_to_compact(&components),
-        Format::Pretty => components_to_pretty(&components),
-        Format::Json => components_to_json(&components)?,
+        Format::Text => {
+            if args.pretty {
+                components_to_pretty(components)
+            } else {
+                components_to_compact(components)
+            }
+        }
+        Format::Json => components_to_json(components, args.pretty),
     }
+    .context("indexDecode")?;
 
     Ok(())
 }
 
-fn components_to_compact(components: &[Components]) {
+fn components_to_compact(
+    components: impl IntoIterator<Item = AnyResult<Components>>,
+) -> AnyResult<()> {
     for component in components {
+        let component = component?;
         let mode = u8::from(component.mode);
         let resolution = u8::from(component.resolution);
         let base_cell = u8::from(component.base_cell);
@@ -70,10 +80,16 @@ fn components_to_compact(components: &[Components]) {
             },
         );
     }
+
+    Ok(())
 }
 
-fn components_to_pretty(components: &[Components]) {
+fn components_to_pretty(
+    components: impl IntoIterator<Item = AnyResult<Components>>,
+) -> AnyResult<()> {
     for component in components {
+        let component = component?;
+
         println!("╔════════════╗");
         println!("║ h3o Index  ║ {}", component.index);
         println!("╠════════════╣");
@@ -96,12 +112,17 @@ fn components_to_pretty(components: &[Components]) {
         }
         println!("╚════════════╝");
     }
+
+    Ok(())
 }
 
-fn components_to_json(components: &[Components]) -> AnyResult<()> {
-    let mut stdout = io::stdout().lock();
-    serde_json::to_writer(&mut stdout, components)
-        .context("write JSON to stdout")
+fn components_to_json(
+    components: impl IntoIterator<Item = AnyResult<Components>>,
+    pretty: bool,
+) -> AnyResult<()> {
+    let components = components.into_iter().collect::<AnyResult<Vec<_>>>()?;
+
+    crate::json::print(&components, pretty)
 }
 
 // -----------------------------------------------------------------------------

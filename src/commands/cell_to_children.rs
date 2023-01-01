@@ -1,10 +1,9 @@
 //! Expose [`CellIndex::children`]
 
-use anyhow::{Context, Result as AnyResult};
+use anyhow::Result as AnyResult;
 use clap::{Parser, ValueEnum};
 use h3o::{CellIndex, Resolution};
 use serde::Serialize;
-use std::io;
 
 /// Converts an index into its descendants.
 ///
@@ -16,7 +15,7 @@ use std::io;
 pub struct Args {
     /// Converts descendants from this index.
     #[arg(short, long)]
-    parent: Option<CellIndex>,
+    ancestor: Option<CellIndex>,
 
     /// Resolution, if less than PARENT's resolution only PARENT is printed.
     #[arg(short, long, default_value_t = Resolution::Zero)]
@@ -25,6 +24,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -35,19 +38,17 @@ enum Format {
 
 /// Run the `cellToChildren` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.parent {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
-    let indexes = indexes
-        .into_iter()
-        .map(|parent| (parent, parent.children(args.resolution)));
+    let indexes = crate::utils::get_cell_indexes(args.ancestor).map(|parent| {
+        parent.map(|parent| (parent, parent.children(args.resolution)))
+    });
 
     match args.format {
         Format::Text => {
-            for index in indexes.flat_map(|(_, children)| children) {
-                println!("{index}");
+            for result in indexes {
+                let (_, children) = result?;
+                for child in children {
+                    println!("{child}");
+                }
             }
         }
         Format::Json => {
@@ -57,18 +58,21 @@ pub fn run(args: &Args) -> AnyResult<()> {
                 children: Option<Vec<crate::json::CellIndex>>,
             }
 
-            let mut stdout = io::stdout().lock();
             let indexes = indexes
-                .map(|(parent, children)| {
-                    let children = children.map(Into::into).collect::<Vec<_>>();
-                    ParentChildren {
-                        parent: parent.into(),
-                        children: (!children.is_empty()).then_some(children),
-                    }
+                .map(|result| {
+                    result.map(|(parent, children)| {
+                        let children =
+                            children.map(Into::into).collect::<Vec<_>>();
+                        ParentChildren {
+                            parent: parent.into(),
+                            children: (!children.is_empty())
+                                .then_some(children),
+                        }
+                    })
                 })
-                .collect::<Vec<_>>();
-            serde_json::to_writer(&mut stdout, &indexes)
-                .context("write JSON to stdout")?;
+                .collect::<AnyResult<Vec<_>>>()?;
+
+            crate::json::print(&indexes, args.pretty)?;
         }
     }
 

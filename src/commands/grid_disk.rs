@@ -4,7 +4,6 @@ use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use h3o::CellIndex;
 use serde::Serialize;
-use std::io;
 
 /// Print cell indexes `radius` distance away from the origin.
 ///
@@ -27,6 +26,10 @@ pub struct Args {
     /// Output format.
     #[arg(short, long, value_enum, default_value_t = Format::Text)]
     format: Format,
+
+    /// Prettify the output (JSON only).
+    #[arg(short, long, default_value_t = false)]
+    pretty: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -37,51 +40,63 @@ enum Format {
 
 /// Run the `gridDisk` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes = if let Some(index) = args.origin {
-        vec![index]
-    } else {
-        crate::io::read_cell_indexes()?
-    };
+    let indexes = crate::utils::get_cell_indexes(args.origin);
 
     match args.format {
-        Format::Text => disks_to_text(&indexes, args.radius, args.distance),
-        Format::Json => disks_to_json(&indexes, args.radius, args.distance)?,
+        Format::Text => disks_to_text(indexes, args.radius, args.distance),
+        Format::Json => {
+            disks_to_json(indexes, args.radius, args.distance, args.pretty)
+        }
     }
+    .context("gridDisk")?;
 
     Ok(())
 }
 
 /// Print disks as plain text.
-fn disks_to_text(indexes: &[CellIndex], radius: u32, with_distance: bool) {
+fn disks_to_text(
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
+    radius: u32,
+    with_distance: bool,
+) -> AnyResult<()> {
     let disks = indexes
-        .iter()
-        .copied()
-        .flat_map(|index| index.grid_disk_distances_safe(radius));
+        .into_iter()
+        .map(|input| input.map(|index| index.grid_disk_distances_safe(radius)));
 
     if with_distance {
-        for (index, distance) in disks {
-            println!("{index} {distance}");
+        for disk in disks {
+            let disk = disk?;
+            for (index, distance) in disk {
+                println!("{index} {distance}");
+            }
         }
     } else {
-        for (index, _) in disks {
-            println!("{index}");
+        for disk in disks {
+            let disk = disk?;
+            for (index, _) in disk {
+                println!("{index}");
+            }
         }
     }
+
+    Ok(())
 }
 
 /// Print disks as JSON.
 fn disks_to_json(
-    indexes: &[CellIndex],
+    indexes: impl IntoIterator<Item = AnyResult<CellIndex>>,
     radius: u32,
     with_distance: bool,
+    pretty: bool,
 ) -> AnyResult<()> {
-    let mut stdout = io::stdout().lock();
-    let disks = indexes.iter().copied().map(|index| {
-        index
-            .grid_disk_distances_safe(radius)
-            .map(|(index, distance)| {
-                (crate::json::CellIndex::from(index), distance)
-            })
+    let disks = indexes.into_iter().map(|input| {
+        input.map(|origin| {
+            origin
+                .grid_disk_distances_safe(radius)
+                .map(|(index, distance)| {
+                    (crate::json::CellIndex::from(index), distance)
+                })
+        })
     });
 
     if with_distance {
@@ -91,18 +106,22 @@ fn disks_to_json(
             distance: u32,
         }
         let disks = disks
-            .map(|disk| {
-                disk.map(|(index, distance)| Neighbor { index, distance })
-                    .collect::<Vec<_>>()
+            .map(|result| {
+                result.map(|disk| {
+                    disk.map(|(index, distance)| Neighbor { index, distance })
+                        .collect::<Vec<_>>()
+                })
             })
-            .collect::<Vec<_>>();
-        serde_json::to_writer(&mut stdout, &disks)
-            .context("write JSON to stdout")
+            .collect::<AnyResult<Vec<_>>>()?;
+        crate::json::print(&disks, pretty)
     } else {
         let disks = disks
-            .map(|disk| disk.map(|(index, _)| index).collect::<Vec<_>>())
-            .collect::<Vec<_>>();
-        serde_json::to_writer(&mut stdout, &disks)
-            .context("write JSON to stdout")
+            .map(|result| {
+                result.map(|disk| {
+                    disk.map(|(index, _)| index).collect::<Vec<_>>()
+                })
+            })
+            .collect::<AnyResult<Vec<_>>>()?;
+        crate::json::print(&disks, pretty)
     }
 }

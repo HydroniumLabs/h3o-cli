@@ -1,4 +1,4 @@
-RUN: @cli cellToLatLng -i 8a1fb4662d47fff -f json
+RUN: @cli cellToLatLng -i 8a1fb4662d47fff -f json -p
 
 CHECK: "lat": 0.85285412
 CHECK: "lng": 0.04100351

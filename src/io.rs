@@ -3,70 +3,35 @@ use anyhow::{Context, Result as AnyResult};
 use h3o::{CellIndex, LatLng};
 use std::io;
 
-pub fn read_cell_indexes() -> AnyResult<Vec<CellIndex>> {
-    let mut indexes = Vec::new();
-    let mut input = String::new();
-    loop {
-        if io::stdin()
-            .read_line(&mut input)
-            .context("read line from stdin")?
-            == 0
-        {
-            break;
-        }
-        indexes.push(
-            input.trim_end().parse().with_context(|| {
-                format!("cannot parse {input} as CellIndex")
-            })?,
-        );
-        input.clear();
-    }
-
-    Ok(indexes)
-}
-
-// TODO: refactor with read_cell_indexes.
-pub fn read_indexes() -> AnyResult<Vec<Index>> {
-    let mut indexes = Vec::new();
-    let mut input = String::new();
-    loop {
-        if io::stdin()
-            .read_line(&mut input)
-            .context("read line from stdin")?
-            == 0
-        {
-            break;
-        }
-        indexes.push(
-            input
-                .trim_end()
+/// Read cell indexes from stdin.
+pub fn read_cell_indexes() -> impl Iterator<Item = AnyResult<CellIndex>> {
+    io::stdin().lines().map(|input| {
+        input.context("read line from stdin").and_then(|line| {
+            line.trim_end()
                 .parse()
-                .with_context(|| format!("cannot parse {input} as Index"))?,
-        );
-        input.clear();
-    }
-
-    Ok(indexes)
+                .with_context(|| format!("cannot parse {line} as CellIndex"))
+        })
+    })
 }
 
-pub fn read_coords() -> AnyResult<Vec<LatLng>> {
-    let mut indexes = Vec::new();
-    let mut input = String::new();
-    loop {
-        if io::stdin()
-            .read_line(&mut input)
-            .context("read line from stdin")?
-            == 0
-        {
-            break;
-        }
-        let parts = input.trim_end().split(' ').collect::<Vec<&str>>();
-        let lat = parts[0].parse::<f64>().context("latitude")?;
-        let lng = parts[1].parse::<f64>().context("longitude")?;
+pub fn read_indexes() -> impl Iterator<Item = AnyResult<Index>> {
+    io::stdin().lines().map(|input| {
+        input.context("read line from stdin").and_then(|line| {
+            line.trim_end()
+                .parse()
+                .with_context(|| format!("cannot parse {line} as Index"))
+        })
+    })
+}
 
-        indexes.push(LatLng::from_degrees(lat, lng).context("lat/lng")?);
-        input.clear();
-    }
+pub fn read_coords() -> impl Iterator<Item = AnyResult<LatLng>> {
+    io::stdin().lines().map(|input| {
+        input.context("read line from stdin").and_then(|line| {
+            let parts = line.trim_end().split(' ').collect::<Vec<&str>>();
+            let lat = parts[0].parse::<f64>().context("latitude")?;
+            let lng = parts[1].parse::<f64>().context("longitude")?;
 
-    Ok(indexes)
+            LatLng::from_degrees(lat, lng).context("lat/lng")
+        })
+    })
 }
