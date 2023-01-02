@@ -1,0 +1,21 @@
+RUN: @cli gridDisk -o 8a1fb4662d47fff -r 2 -d
+
+CHECK: 8a1fb4662d47fff 0
+CHECK: 8a1fb4662d57fff 1
+CHECK: 8a1fb4662d5ffff 1
+CHECK: 8a1fb4662d4ffff 1
+CHECK: 8a1fb4662d6ffff 1
+CHECK: 8a1fb4662d67fff 1
+CHECK: 8a1fb4662d77fff 1
+CHECK: 8a1fb4662c27fff 2
+CHECK: 8a1fb4662c2ffff 2
+CHECK: 8a1fb4662d0ffff 2
+CHECK: 8a1fb4662c77fff 2
+CHECK: 8a1fb4662c67fff 2
+CHECK: 8a1fb4662897fff 2
+CHECK: 8a1fb46628b7fff 2
+CHECK: 8a1fb466299ffff 2
+CHECK: 8a1fb4662997fff 2
+CHECK: 8a1fb46666cffff 2
+CHECK: 8a1fb46666dffff 2
+CHECK: 8a1fb4662d2ffff 2

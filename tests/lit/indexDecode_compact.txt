@@ -1,0 +1,10 @@
+RUN: grep '^[0-9]' @file | @cli indexDecode
+
+CHECK: 2:5:10:15:6643142650
+15a1fb4662d47fff
+
+CHECK: 4:2:10:15:6643142650
+22a1fb4662d47fff
+
+CHECK: 1:9:20:060405665
+89283082ed7ffff

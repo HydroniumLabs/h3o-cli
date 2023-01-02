@@ -1,0 +1,18 @@
+RUN: @cli cellToPolygon -i 8a1fb4662d47fff -f geojson -p
+
+CHECK: 2.34913893[[\d*]]
+CHECK:48.86429852[[\d*]]
+CHECK: 2.35004116[[\d*]]
+CHECK:48.86446219[[\d*]]
+CHECK: 2.35023071[[\d*]]
+CHECK:48.86510573[[\d*]]
+CHECK: 2.34951801[[\d*]]
+CHECK:48.86558561[[\d*]]
+CHECK: 2.34861575[[\d*]]
+CHECK:48.86542193[[\d*]]
+CHECK: 2.34842622[[\d*]]
+CHECK:48.86477839[[\d*]]
+CHECK: 2.34913893[[\d*]]
+CHECK:48.86429852[[\d*]]
+
+CHECK:"type": "MultiPolygon"

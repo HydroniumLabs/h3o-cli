@@ -1,0 +1,17 @@
+RUN: @cli resolutionInfo -f json -p
+
+CHECK: "resolution": 1
+CHECK: "resolution": 2
+CHECK: "resolution": 3
+CHECK: "resolution": 4
+CHECK: "resolution": 5
+CHECK: "resolution": 6
+CHECK: "resolution": 7
+CHECK: "resolution": 8
+CHECK: "resolution": 9
+CHECK: "resolution": 10
+CHECK: "resolution": 11
+CHECK: "resolution": 12
+CHECK: "resolution": 13
+CHECK: "resolution": 14
+CHECK: "resolution": 15

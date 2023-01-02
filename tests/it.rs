@@ -35,6 +35,8 @@ fn cargo_bin(name: &str) -> String {
 fn lit() {
     lit::run::tests(lit::event_handler::Default::default(), |config| {
         config.add_search_path(format!("{CRATE_PATH}/tests/lit"));
+        config.add_extension("geojson");
+        config.add_extension("kml");
         config.add_extension("txt");
         config
             .constants

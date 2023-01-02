@@ -1,0 +1,6 @@
+RUN: @cli gridPath -s 8b1fb46622dcfff -d 8b1fb4662289fff
+CHECK: 8b1fb46622dcfff
+CHECK: 8b1fb46622d1fff
+CHECK: 8b1fb46622d0fff
+CHECK: 8b1fb46622d4fff
+CHECK: 8b1fb4662289fff

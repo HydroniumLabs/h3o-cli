@@ -1,0 +1,53 @@
+RUN: grep '^[0-9]' @file | @cli indexDecode -f json -p
+
+CHECK: "index": "15a1fb4662d47fff"
+CHECK: "mode": 2
+CHECK: "edge": 5
+CHECK: "resolution": 10
+CHECK: "baseCell": 15
+CHECK: "directions"
+CHECK: 6
+CHECK: 6
+CHECK: 4
+CHECK: 3
+CHECK: 1
+CHECK: 4
+CHECK: 2
+CHECK: 6
+CHECK: 5
+CHECK: 0
+15a1fb4662d47fff
+
+CHECK: "index": "22a1fb4662d47fff"
+CHECK: "mode": 4
+CHECK: "vertex": 2
+CHECK: "resolution": 10
+CHECK: "baseCell": 15
+CHECK: "directions"
+CHECK: 6
+CHECK: 6
+CHECK: 4
+CHECK: 3
+CHECK: 1
+CHECK: 4
+CHECK: 2
+CHECK: 6
+CHECK: 5
+CHECK: 0
+22a1fb4662d47fff
+
+CHECK: "index": "89283082ed7ffff"
+CHECK: "mode": 1
+CHECK: "resolution": 9
+CHECK: "baseCell": 20
+CHECK: "directions"
+CHECK: 0
+CHECK: 6
+CHECK: 0
+CHECK: 4
+CHECK: 0
+CHECK: 5
+CHECK: 6
+CHECK: 6
+CHECK: 5
+89283082ed7ffff

@@ -1,0 +1,13 @@
+RUN: grep '^8' @file | @cli cellToChildren -r 11
+
+CHECK: 8b1fb4662d40fff
+CHECK: 8b1fb4662d41fff
+CHECK: 8b1fb4662d42fff
+CHECK: 8b1fb4662d43fff
+CHECK: 8b1fb4662d44fff
+CHECK: 8b1fb4662d45fff
+CHECK: 8b1fb4662d46fff
+8a1fb4662d47fff
+
+CHECK: 8b1fb4662d43fff
+8b1fb4662d43fff

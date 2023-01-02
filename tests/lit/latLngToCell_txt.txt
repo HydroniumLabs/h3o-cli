@@ -1,0 +1,2 @@
+RUN: @cli latLngToCell -r 10 --lat 48.856613 --lng 2.352222
+CHECK: 8a1fb4662557fff

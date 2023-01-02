@@ -1,0 +1,2 @@
+RUN: @cli cellToChildren -a 89283082ed7ffff -r 10 | @cli compact -f json -p
+CHECK: "89283082ed7ffff"

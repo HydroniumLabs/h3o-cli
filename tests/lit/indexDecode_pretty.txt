@@ -1,0 +1,50 @@
+RUN: grep '^[0-9]' @file | @cli indexDecode -p
+
+CHECK: ║ h3o Index  ║ 15a1fb4662d47fff
+CHECK: ║ Mode       ║ DirectedEdge (2)
+CHECK: ║ Resolution ║ 10
+CHECK: ║ Edge       ║ 5
+CHECK: ║ Base Cell  ║ 15
+CHECK: ║ Child  1   ║ 6 (IJ)
+CHECK: ║ Child  2   ║ 6 (IJ)
+CHECK: ║ Child  3   ║ 4 (I)
+CHECK: ║ Child  4   ║ 3 (JK)
+CHECK: ║ Child  5   ║ 1 (K)
+CHECK: ║ Child  6   ║ 4 (I)
+CHECK: ║ Child  7   ║ 2 (J)
+CHECK: ║ Child  8   ║ 6 (IJ)
+CHECK: ║ Child  9   ║ 5 (IK)
+CHECK: ║ Child 10   ║ 0 (Center)
+15a1fb4662d47fff
+
+CHECK: ║ h3o Index  ║ 22a1fb4662d47fff
+CHECK: ║ Mode       ║ Vertex (4)
+CHECK: ║ Resolution ║ 10
+CHECK: ║ Vertex     ║ 2
+CHECK: ║ Base Cell  ║ 15
+CHECK: ║ Child  1   ║ 6 (IJ)
+CHECK: ║ Child  2   ║ 6 (IJ)
+CHECK: ║ Child  3   ║ 4 (I)
+CHECK: ║ Child  4   ║ 3 (JK)
+CHECK: ║ Child  5   ║ 1 (K)
+CHECK: ║ Child  6   ║ 4 (I)
+CHECK: ║ Child  7   ║ 2 (J)
+CHECK: ║ Child  8   ║ 6 (IJ)
+CHECK: ║ Child  9   ║ 5 (IK)
+CHECK: ║ Child 10   ║ 0 (Center)
+22a1fb4662d47fff
+
+CHECK: ║ h3o Index  ║ 89283082ed7ffff
+CHECK: ║ Mode       ║ Cell (1)
+CHECK: ║ Resolution ║ 9
+CHECK: ║ Base Cell  ║ 20
+CHECK: ║ Child  1   ║ 0 (Center)
+CHECK: ║ Child  2   ║ 6 (IJ)
+CHECK: ║ Child  3   ║ 0 (Center)
+CHECK: ║ Child  4   ║ 4 (I)
+CHECK: ║ Child  5   ║ 0 (Center)
+CHECK: ║ Child  6   ║ 5 (IK)
+CHECK: ║ Child  7   ║ 6 (IJ)
+CHECK: ║ Child  8   ║ 6 (IJ)
+CHECK: ║ Child  9   ║ 5 (IK)
+89283082ed7ffff

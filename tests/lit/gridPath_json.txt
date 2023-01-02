@@ -1,0 +1,12 @@
+RUN: grep '^8' @file | @cli gridPath -f json -p
+
+CHECK: "8a1fb46622dffff"
+CHECK: "8a1fb46622d7fff"
+CHECK: "8a1fb4644927fff"
+CHECK: "8a1fb466228ffff"
+CHECK: "8a1fb46622affff"
+CHECK: "8a1fb4662217fff"
+CHECK: "8a1fb4662237fff"
+8a1fb46622dffff
+8a1fb4644927fff
+8a1fb4662237fff

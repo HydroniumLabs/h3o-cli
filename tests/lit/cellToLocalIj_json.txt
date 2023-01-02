@@ -1,0 +1,8 @@
+RUN: grep '^8' @file | @cli cellToLocalIj -o 8f1fb46622d8591 -f json -p
+
+CHECK: "i": 1247244
+CHECK: "j": 1058451
+8f1fb464492001a
+
+CHECK: null
+86283082fffffff

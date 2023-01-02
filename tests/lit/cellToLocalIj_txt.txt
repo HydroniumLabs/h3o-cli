@@ -1,0 +1,7 @@
+RUN: grep '^8' @file | @cli cellToLocalIj -o 8f1fb46622d8591
+
+CHECK: 1247244 1058451
+8f1fb464492001a
+
+CHECK: NA
+86283082fffffff

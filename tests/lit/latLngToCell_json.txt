@@ -1,0 +1,19 @@
+# RUN: grep '^[0-9]' @file | @cli latLngToCell -r 7 -f json -p
+
+# CHECK: "871f90209ffffff"
+45.76 4.84
+
+# CHECK: "873968152ffffff"
+43.2964 5.37
+
+# CHECK: "8739601aeffffff"
+43.6045 1.444
+
+# CHECK: "87186b6caffffff"
+44.84 -0.58
+
+# CHECK: "87184584effffff"
+47.2181 -1.5528
+
+# CHECK: "871fb4662ffffff"
+48.856613 2.352222

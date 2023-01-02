@@ -1,2 +1,9 @@
-RUN: @cli cellToChildren -a 89283082ed7ffff -r 11 | @cli compress | @cli decompress | @cli compact -f json
-CHECK: ["89283082ed7ffff"]
+RUN: @cli cellToChildren -a 89283082ed7ffff -r 10 | @cli compress | @cli decompress -f json -p
+
+CHECK: "8a283082ed47fff"
+CHECK: "8a283082ed4ffff"
+CHECK: "8a283082ed57fff"
+CHECK: "8a283082ed5ffff"
+CHECK: "8a283082ed67fff"
+CHECK: "8a283082ed6ffff"
+CHECK: "8a283082ed77fff"
