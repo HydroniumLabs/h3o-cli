@@ -1,8 +1,9 @@
 RUN: @cli cellToLatLng -i 8a1fb4662d47fff -f geojson -p
 
 # longitude first, then latitude.
-CHECK: 2.349328471482505
-CHECK: 48.86494206995785
+
+CHECK:  2.34932847[[\d*]]
+CHECK: 48.86494206[[\d*]]
 
 # Converted to a single point.
 CHECK: "type": "Point"

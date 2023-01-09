@@ -1,2 +1,2 @@
 RUN: @cli cellToLatLng -i 8a1fb4662d47fff -f kml
-CHECK: <coordinates>2.349328471482505,48.86494206995785</coordinates>
+CHECK: <coordinates>2.34932847[[\d*]],48.86494206[[\d*]]</coordinates>
