@@ -3,6 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/h3o-cli.svg)](https://crates.io/crates/h3o-cli)
 [![Docs.rs](https://docs.rs/h3o-cli/badge.svg)](https://docs.rs/h3o-cli)
 [![CI Status](https://github.com/HydroniumLabs/h3o-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/HydroniumLabs/h3o-cli/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/HydroniumLabs/h3o-cli)](https://app.codecov.io/gh/HydroniumLabs/h3o-cli)
 [![License](https://img.shields.io/badge/license-BSD-green)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## How to install
