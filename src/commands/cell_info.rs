@@ -78,7 +78,7 @@ impl From<CellIndex> for CellInfo {
             index: value.to_string(),
             base_cell: value.base_cell(),
             resolution: value.resolution(),
-            center: (ll.lat_degrees(), ll.lng_degrees()),
+            center: (ll.lat(), ll.lng()),
             area: value.area_km2(),
             edge_length: edges[0].length_km(),
             parent: value

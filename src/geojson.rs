@@ -33,9 +33,7 @@ pub fn centers(indexes: &[CellIndex]) -> Vec<Feature> {
         .copied()
         .map(|index| {
             let ll = LatLng::from(index);
-            let center = geo_types::Point(
-                coord! {x: ll.lng_degrees(), y: ll.lat_degrees()},
-            );
+            let center = geo_types::Point(coord! {x: ll.lng(), y: ll.lat()});
             let geometry = geojson::Geometry::new((&center).into());
             let mut properties = JsonObject::new();
             properties

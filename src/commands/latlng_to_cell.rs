@@ -47,7 +47,7 @@ enum Format {
 pub fn run(args: &Args) -> AnyResult<()> {
     let indexes = if let (Some(lat), Some(lng)) = (args.lat, args.lng) {
         Either::Left(std::iter::once(
-            LatLng::from_degrees(lat, lng).context("invalid lat/lng"),
+            LatLng::new(lat, lng).context("invalid lat/lng"),
         ))
     } else {
         Either::Right(crate::io::read_coords())

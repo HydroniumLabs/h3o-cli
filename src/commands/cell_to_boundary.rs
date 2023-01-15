@@ -55,7 +55,7 @@ fn boundaries_to_text(
         println!("{index}");
         println!("{{");
         for ll in index.boundary().iter() {
-            println!("   {:.9} {:.9}", ll.lat_degrees(), ll.lng_degrees());
+            println!("   {:.9} {:.9}", ll.lat(), ll.lng());
         }
         println!("}}");
     }

@@ -31,7 +31,7 @@ pub fn read_coords() -> impl Iterator<Item = AnyResult<LatLng>> {
             let lat = parts[0].parse::<f64>().context("latitude")?;
             let lng = parts[1].parse::<f64>().context("longitude")?;
 
-            LatLng::from_degrees(lat, lng).context("lat/lng")
+            LatLng::new(lat, lng).context("lat/lng")
         })
     })
 }

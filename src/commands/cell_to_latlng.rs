@@ -54,7 +54,7 @@ fn latlng_to_text(
 ) -> AnyResult<()> {
     for ll in indexes.into_iter().map(|input| input.map(LatLng::from)) {
         let ll = ll?;
-        println!("{:.9} {:.9}", ll.lat_degrees(), ll.lng_degrees());
+        println!("{:.9} {:.9}", ll.lat(), ll.lng());
     }
 
     Ok(())

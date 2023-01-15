@@ -38,7 +38,7 @@ pub fn centers(indexes: &[CellIndex], style: &str) -> Vec<Kml> {
         .map(|index| {
             let ll = LatLng::from(index);
             let geometry = kml::types::Point {
-                coord: coord! {x: ll.lng_degrees(), y: ll.lat_degrees()}.into(),
+                coord: coord! {x: ll.lng(), y: ll.lat()}.into(),
                 altitude_mode: kml::types::AltitudeMode::RelativeToGround,
                 ..kml::types::Point::default()
             };
