@@ -10,7 +10,7 @@ homepage = "https://docs.rs/h3o-cli"
 repository = "https://github.com/HydroniumLabs/h3o-cli"
 license = "BSD-3-Clause"
 keywords = ["geography", "geospatial", "gis", "h3", "spatial-index"]
-categories = ["science"]
+categories = ["science::geo"]
 
 [package.metadata.release]
 pre-release-commit-message = "release {{version}}"
