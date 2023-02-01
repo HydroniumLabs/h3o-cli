@@ -86,9 +86,9 @@ fn boundaries_to_kml(
     let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
     let style_id = "lineStyle1";
     let style = kml::types::Style {
-        id: style_id.to_owned(),
+        id: Some(style_id.to_owned()),
         line: Some(kml::types::LineStyle {
-            id: "lineStyle2".to_owned(),
+            id: Some("lineStyle2".to_owned()),
             color: "ff0000ff".to_owned(),
             width: 2.,
             ..kml::types::LineStyle::default()

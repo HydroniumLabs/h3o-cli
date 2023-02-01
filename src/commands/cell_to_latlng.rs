@@ -96,10 +96,13 @@ fn latlng_to_kml(
     let indexes = indexes.into_iter().collect::<AnyResult<Vec<_>>>()?;
     // Define styles.
     let style = kml::types::Style {
-        id: "s_circle".to_owned(),
+        id: Some("s_circle".to_owned()),
         icon: Some(kml::types::IconStyle{
             scale: 1.1,
-            icon: kml::types::Icon {href: "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png".to_owned()},
+            icon: kml::types::Icon {
+                href: "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png".to_owned(),
+                ..kml::types::Icon::default()
+            },
             hot_spot: Some(kml::types::Vec2 {
                 x: 20.,
                 y: 2.,
@@ -116,10 +119,13 @@ fn latlng_to_kml(
         ..kml::types::Style::default()
     };
     let style_hl = kml::types::Style {
-        id: "s_circle_hl".to_owned(),
+        id: Some("s_circle_hl".to_owned()),
         icon: Some(kml::types::IconStyle{
             scale: 1.3,
-            icon: kml::types::Icon {href: "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png".to_owned()},
+            icon: kml::types::Icon {
+                href: "http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png".to_owned(),
+                ..kml::types::Icon::default()
+            },
             hot_spot: Some(kml::types::Vec2 {
                 x: 20.,
                 y: 2.,
@@ -137,7 +143,7 @@ fn latlng_to_kml(
     };
     let style_id = "m_ylw-pushpin";
     let style_map = kml::types::StyleMap {
-        id: style_id.to_owned(),
+        id: Some(style_id.to_owned()),
         pairs: vec![
             kml::types::Pair {
                 key: "normal".to_owned(),
@@ -150,6 +156,7 @@ fn latlng_to_kml(
                 ..kml::types::Pair::default()
             },
         ],
+        ..kml::types::StyleMap::default()
     };
     let mut elements = vec![
         Kml::Style(style),
