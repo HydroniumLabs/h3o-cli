@@ -14,6 +14,16 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Changed
+
+- coordinates order in polygons' loops is no longer stable (it may change
+  between two executions), but the relative order is preserved (i.e. they still
+  represent the same geometrical object)
+
+### Added
+
+- the polyfill mode for CellToPolygon can be selected with `-m/--mode`
+
 ## [0.1.3] - 2023-05-30
 
 ### Changed
