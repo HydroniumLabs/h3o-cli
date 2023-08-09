@@ -4,10 +4,10 @@ RUN: @cli resolutionInfo -r 10 && @cli resolutionInfo -r 7
 CHECK: resolution:[[\s+]]10
 CHECK: cell count:[[\s+]]33897029882
 CHECK: hexagon area:[[\s+]]15047.50190766435 m2
-CHECK: edge length:[[\s+]]65.907807 m
+CHECK: edge length:[[\s+]]75.86378286883358 m
 
 # Lower res use kilometers.
 CHECK: resolution:[[\s+]]7
 CHECK: cell count:[[\s+]]98825162
 CHECK: hexagon area:[[\s+]]5.161293359717191 km2
-CHECK: edge length:[[\s+]]1.220629759 km
+CHECK: edge length:[[\s+]]1.4064757626435986 km

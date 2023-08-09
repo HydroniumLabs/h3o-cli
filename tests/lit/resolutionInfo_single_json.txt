@@ -3,4 +3,4 @@ RUN: @cli resolutionInfo -r 10 -f json -p
 CHECK: "resolution": 10
 CHECK: "cell_count": 33897029882
 CHECK: "hexagon_area_km2": 0.015047501[[\d*]]
-CHECK: "edge_length_km": 0.065907[[\d*]]
+CHECK: "edge_length_km": 0.075863[[\d*]]
