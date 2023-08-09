@@ -3,7 +3,7 @@
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use h3o::{
-    geom::{Geometry, ToCells},
+    geom::{ContainmentMode, Geometry, ToCells},
     Resolution,
 };
 use kml::{Kml, KmlReader};
@@ -19,6 +19,10 @@ pub struct Args {
     #[arg(short, long)]
     resolution: Resolution,
 
+    /// Polyfill mode.
+    #[arg(short, long, value_enum, default_value_t = Mode::ContainsCentroid)]
+    mode: Mode,
+
     /// Input format.
     #[arg(short, long, value_enum, default_value_t = Format::Geojson)]
     format: Format,
@@ -30,8 +34,28 @@ enum Format {
     Kml,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
+enum Mode {
+    ContainsCentroid,
+    ContainsBoundary,
+    IntersectsBoundary,
+}
+
+impl From<Mode> for ContainmentMode {
+    fn from(value: Mode) -> Self {
+        match value {
+            Mode::ContainsCentroid => Self::ContainsCentroid,
+            Mode::ContainsBoundary => Self::ContainsBoundary,
+            Mode::IntersectsBoundary => Self::IntersectsBoundary,
+        }
+    }
+}
+
 /// Run the `cellToPolygon` command.
 pub fn run(args: &Args) -> AnyResult<()> {
+    let config = h3o::geom::PolyfillConfig::new(args.resolution)
+        .containment_mode(args.mode.into());
+
     let indexes = match args.format {
         Format::Geojson => {
             let geojson = geojson::GeoJson::from_reader(io::stdin())
@@ -39,7 +63,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
             let geometry =
                 Geometry::try_from(&geojson).context("invalid geometry")?;
 
-            geometry.to_cells(args.resolution).collect::<HashSet<_>>()
+            geometry.to_cells(config).collect::<HashSet<_>>()
         }
         Format::Kml => {
             let kml: Kml<f64> =
@@ -53,7 +77,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
             )
             .context("invalid geometry")?;
 
-            geometry.to_cells(args.resolution).collect::<HashSet<_>>()
+            geometry.to_cells(config).collect::<HashSet<_>>()
         }
     };
 
