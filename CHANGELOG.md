@@ -14,6 +14,8 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.2.0] - 2023-08-09
+
 ### Changed
 
 - coordinates order in polygons' loops is no longer stable (it may change
