@@ -54,7 +54,7 @@ fn boundaries_to_text(
         let index = index?;
         println!("{index}");
         println!("{{");
-        for ll in index.boundary().iter() {
+        for ll in &*index.boundary() {
             println!("   {:.9} {:.9}", ll.lat(), ll.lng());
         }
         println!("}}");
