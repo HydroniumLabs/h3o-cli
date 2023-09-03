@@ -8,16 +8,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2
+        run: rustup update stable
       - name: Check compilation errors
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+        run: cargo check --all-features
 
   fmt:
     name: Rustfmt
@@ -26,18 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install rustfmt
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          components: rustfmt
-          override: true
-      - uses: Swatinem/rust-cache@v2
+        run: rustup update nightly && rustup component add rustfmt --toolchain nightly
       - name: Check formatting errors
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo +nightly fmt --all -- --check
 
   clippy:
     name: Clippy
@@ -46,18 +30,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Clippy
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          components: clippy
-          override: true
-      - uses: Swatinem/rust-cache@v2
+        run: rustup update stable && rustup component add clippy
       - name: Check lint errors
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-targets --all-features
+        run: cargo clippy --all-targets --all-features
   docs:
     name: Docs
     runs-on: ubuntu-latest
@@ -65,43 +40,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - uses: Swatinem/rust-cache@v2
+        run: rustup update stable
       - name: Check documentation errors
         env:
           RUSTDOCFLAGS: -D warnings
-        uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          args: --no-deps --document-private-items --all-features --examples
+        run: cargo doc --no-deps --document-private-items --all-features --examples
 
   test:
     name: Test
-    env:
-      PROJECT_NAME: "h3o-cli"
-      RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off"
-      CARGO_INCREMENTAL: 0
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
-      - uses: Swatinem/rust-cache@v2
+        run: rustup update stable
       - name: Install cargo-llvm-cov
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-llvm-cov
-          version: 0.5.3
-          use-tool-cache: true
+        uses: taiki-e/install-action@cargo-llvm-cov
       - name: Install rust-covfix
         uses: actions-rs/install@v0.1
         with:
@@ -110,10 +64,10 @@ jobs:
           use-tool-cache: true
       - name: Generate test result and coverage report
         run: |
-          cargo llvm-cov --lcov --output-path lcov.info;
+          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info;
           rust-covfix -o lcov-fixed.info lcov.info
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           files: ./lcov-fixed.info
           fail_ci_if_error: true
@@ -125,13 +79,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: publish
-          args: --dry-run
+        run: rustup update stable
+      - run: cargo publish --dry-run
