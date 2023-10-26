@@ -14,6 +14,10 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Changed
+
+- bump deps to fix GHSA-c827-hfw6-qwvm
+
 ## [0.2.0] - 2023-08-09
 
 ### Changed
