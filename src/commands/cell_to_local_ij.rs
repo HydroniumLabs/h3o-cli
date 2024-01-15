@@ -57,7 +57,7 @@ fn local_ij_to_text(
     for coord in coords {
         coord?.map_or_else(
             || println!("NA"),
-            |coord| println!("{} {}", coord.i(), coord.j()),
+            |coord| println!("{} {}", coord.coord.i, coord.coord.j),
         );
     }
 
@@ -79,8 +79,8 @@ fn local_ij_to_json(
         .map(|result| {
             result.map(|value| {
                 value.map(|coord| CoordIJ {
-                    i: coord.i(),
-                    j: coord.j(),
+                    i: coord.coord.i,
+                    j: coord.coord.j,
                 })
             })
         })
