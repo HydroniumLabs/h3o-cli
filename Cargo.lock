@@ -112,12 +112,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "auto_ops"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7460f7dd8e100147b82a63afca1a20eb6c231ee36b90ba7272e14951cb58af59"
-
-[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -254,12 +248,6 @@ dependencies = [
  "once_cell",
  "tiny-keccak",
 ]
-
-[[package]]
-name = "const_panic"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6051f239ecec86fde3410901ab7860d458d160371533842974fc61f96d15879b"
 
 [[package]]
 name = "critical-section"
@@ -412,18 +400,17 @@ checksum = "4271d37baee1b8c7e4b708028c57d816cf9d2434acb33a549475f78c181f6253"
 
 [[package]]
 name = "h3o"
-version = "0.5.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9b4a384abdfc9d330e73d69e503c572e58ff029ecd66e7877327a76cb0fd1a2"
+checksum = "732921589aa26ebc91ba314ccbccc284d25a85b24a3bcd98dfa476fd8100bd85"
 dependencies = [
  "ahash",
- "auto_ops",
  "either",
  "float_eq",
  "geo",
  "geojson",
  "h3o-bit",
- "konst",
+ "libm",
  "serde",
  "serde_repr",
 ]
@@ -436,7 +423,7 @@ checksum = "fbf4481f08bbbaa031119a896b1cd84bdbfbe6d315b82097bf098644d9f9525a"
 
 [[package]]
 name = "h3o-cli"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "anyhow",
  "clap",
@@ -444,12 +431,24 @@ dependencies = [
  "geo-types",
  "geojson",
  "h3o",
+ "h3o-zip",
  "kml",
  "lit",
  "maplit",
  "serde",
  "serde_json",
- "thc",
+]
+
+[[package]]
+name = "h3o-zip"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5b2dcd511586531f3b844d366be45bc080f18967a9af91181c7e93b7b8f45f4"
+dependencies = [
+ "bitvec",
+ "either",
+ "h3o",
+ "h3o-bit",
 ]
 
 [[package]]
@@ -505,26 +504,6 @@ dependencies = [
  "num-traits",
  "quick-xml",
  "thiserror",
-]
-
-[[package]]
-name = "konst"
-version = "0.3.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d712a8c49d4274f8d8a5cf61368cb5f3c143d149882b1a2918129e53395fdb0"
-dependencies = [
- "const_panic",
- "konst_kernel",
- "typewit",
-]
-
-[[package]]
-name = "konst_kernel"
-version = "0.3.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dac6ea8c376b6e208a81cf39b8e82bebf49652454d98a4829e907dac16ef1790"
-dependencies = [
- "typewit",
 ]
 
 [[package]]
@@ -904,18 +883,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "thc"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6fe8c47711f406ed475786b6412967ad8de47a7bb27b054850434370ab30381"
-dependencies = [
- "bitvec",
- "either",
- "h3o",
- "h3o-bit",
-]
-
-[[package]]
 name = "thiserror"
 version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -943,21 +910,6 @@ checksum = "2c9d3793400a45f954c52e73d068316d76b6f4e36977e3fcebb13a2721e80237"
 dependencies = [
  "crunchy",
 ]
-
-[[package]]
-name = "typewit"
-version = "1.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6fb9ae6a3cafaf0a5d14c2302ca525f9ae8e07a0f0e6949de88d882c37a6e24"
-dependencies = [
- "typewit_proc_macros",
-]
-
-[[package]]
-name = "typewit_proc_macros"
-version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e36a83ea2b3c704935a01b4642946aadd445cea40b10935e3f8bd8052b8193d6"
 
 [[package]]
 name = "unicode-ident"

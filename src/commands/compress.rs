@@ -1,4 +1,4 @@
-//! Expose [`thc::compress`]
+//! Expose [`h3o_zip::compress`]
 
 use anyhow::{Context, Result as AnyResult};
 use clap::Parser;
@@ -15,7 +15,7 @@ pub fn run(_args: &Args) -> AnyResult<()> {
     indexes.sort_unstable();
 
     let mut stdout = io::stdout().lock();
-    thc::compress(&mut stdout, indexes).context("compression")?;
+    h3o_zip::compress(&mut stdout, indexes).context("compression")?;
 
     Ok(())
 }

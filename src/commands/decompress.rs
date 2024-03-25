@@ -1,4 +1,4 @@
-//! Expose [`thc::decompress`]
+//! Expose [`h3o_zip::decompress`]
 
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
@@ -28,7 +28,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
     io::stdin()
         .read_to_end(&mut bytes)
         .context("read bytes from stdin")?;
-    let indexes = thc::decompress(bytes.as_slice());
+    let indexes = h3o_zip::decompress(bytes.as_slice());
 
     match args.format {
         Format::Text => {

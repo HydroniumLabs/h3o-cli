@@ -82,11 +82,11 @@ h3o-cli latLngToCell -r 7 < cities-center.txt \
 ```
 
 Load the shape of a city, compute the cell coverage at resolution 11 and save
-the compressed result in `city.thc`:
+the compressed result in `city.cht`:
 ```text
 h3o-cli geomToCells -r 11 < city.geojson \
     | h3o-cli compact \
-    | h3o-cli compress > city.thc
+    | h3o-cli compress > city.cht
 ```
 
 ## License
