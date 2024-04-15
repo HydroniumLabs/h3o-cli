@@ -1,0 +1,13 @@
+RUN: grep '^8' @file | @cli cellToParent -r 11 -f json -p
+
+CHECK: "child": "8a1fb4662d47fff"
+CHECK: "parent": null
+8a1fb4662d47fff
+
+CHECK: "child": "8b1fb4662d43fff"
+CHECK: "parent": "8b1fb4662d43fff"
+8b1fb4662d43fff
+
+CHECK: "child": "8c1fb4662d465ff"
+CHECK: "parent": "8b1fb4662d46fff"
+8c1fb4662d465ff

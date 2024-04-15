@@ -1,0 +1,7 @@
+RUN: grep '^8' @file | @cli cellToParent -r 10
+
+CHECK: 8a1fb4662d47fff
+8a1fb4662d47fff
+
+CHECK: 8a1fb4662d47fff
+8b1fb4662d43fff

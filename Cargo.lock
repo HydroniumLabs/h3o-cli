@@ -423,7 +423,7 @@ checksum = "fbf4481f08bbbaa031119a896b1cd84bdbfbe6d315b82097bf098644d9f9525a"
 
 [[package]]
 name = "h3o-cli"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "anyhow",
  "clap",

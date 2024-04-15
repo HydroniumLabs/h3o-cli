@@ -14,6 +14,10 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- the cellToParent command
+
 ## [0.2.3] - 2024-03-25
 
 ### Changed

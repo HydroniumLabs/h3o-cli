@@ -17,6 +17,7 @@ enum Command {
     CellToChildren(commands::cell_to_children::Args),
     CellToLatLng(commands::cell_to_latlng::Args),
     CellToLocalIj(commands::cell_to_local_ij::Args),
+    CellToParent(commands::cell_to_parent::Args),
     CellToPolygon(commands::cell_to_polygon::Args),
     Compact(commands::compact::Args),
     Compress(commands::compress::Args),
@@ -45,6 +46,9 @@ fn main() -> AnyResult<()> {
         }
         Command::CellToLocalIj(args) => {
             commands::cell_to_local_ij::run(&args)?;
+        }
+        Command::CellToParent(args) => {
+            commands::cell_to_parent::run(&args)?;
         }
         Command::CellToPolygon(args) => {
             commands::cell_to_polygon::run(&args)?;
