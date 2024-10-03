@@ -39,6 +39,7 @@ enum Mode {
     ContainsCentroid,
     ContainsBoundary,
     IntersectsBoundary,
+    Covers,
 }
 
 impl From<Mode> for ContainmentMode {
@@ -47,6 +48,7 @@ impl From<Mode> for ContainmentMode {
             Mode::ContainsCentroid => Self::ContainsCentroid,
             Mode::ContainsBoundary => Self::ContainsBoundary,
             Mode::IntersectsBoundary => Self::IntersectsBoundary,
+            Mode::Covers => Self::Covers,
         }
     }
 }

@@ -14,6 +14,10 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- support for `covers` mode in `geomToCells`
+
 ## [0.2.4] - 2024-04-15
 
 ### Added

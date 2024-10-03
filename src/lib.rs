@@ -105,6 +105,7 @@
     clippy::missing_errors_doc,
     // Used by some subcommands.
     clippy::use_debug,
+    reason = "allow some exceptions"
 )]
 
 // }}}

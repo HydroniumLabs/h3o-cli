@@ -1,6 +1,6 @@
 [package]
 name = "h3o-cli"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["Sylvain Laperche <sylvain.laperche@gmail.com>"]
 edition = "2021"
 description = "A CLI app that exposes most of the h3o API for scripting."

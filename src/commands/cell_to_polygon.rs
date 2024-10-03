@@ -19,7 +19,7 @@ pub struct Args {
     #[arg(short, long, value_enum, default_value_t = Format::Geojson)]
     format: Format,
 
-    /// Prettify the output (GeoJSON only)
+    /// Prettify the output (`GeoJSON` only)
     #[arg(short, long, default_value_t = false)]
     pretty: bool,
 }
