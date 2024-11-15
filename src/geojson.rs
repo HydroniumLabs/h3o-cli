@@ -1,14 +1,13 @@
-use geo_types::coord;
+use geo_types::{coord, Polygon};
 use geojson::{Feature, JsonObject, JsonValue};
-use h3o::{geom::ToGeo, CellIndex, LatLng};
+use h3o::{CellIndex, LatLng};
 
 /// Returns `GeoJSON` features representing the indexes' boundaries.
 pub fn boundaries(indexes: &[CellIndex]) -> Vec<Feature> {
     indexes
         .iter()
         .map(|index| {
-            let polygon = index.to_geom(true).expect("infaillible");
-            let (linestring, _) = polygon.into_inner();
+            let (linestring, _) = Polygon::from(*index).into_inner();
             let geometry = geojson::Geometry::new((&linestring).into());
             let mut properties = JsonObject::new();
             properties
