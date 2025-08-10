@@ -26,18 +26,18 @@ enum Format {
 
 /// Run the `compact` command.
 pub fn run(args: &Args) -> AnyResult<()> {
-    let indexes =
+    let mut indexes =
         crate::io::read_cell_indexes().collect::<AnyResult<Vec<_>>>()?;
 
-    let compacted = CellIndex::compact(indexes).context("compaction")?;
+    CellIndex::compact(&mut indexes).context("compaction")?;
     match args.format {
         Format::Text => {
-            for index in compacted {
+            for index in indexes {
                 println!("{index}");
             }
         }
         Format::Json => {
-            let compacted = compacted
+            let compacted = indexes
                 .into_iter()
                 .map(Into::into)
                 .collect::<Vec<crate::json::CellIndex>>();

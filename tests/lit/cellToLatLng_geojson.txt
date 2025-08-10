@@ -1,15 +1,14 @@
 RUN: @cli cellToLatLng -i 8a1fb4662d47fff -f geojson -p
 
-# longitude first, then latitude.
-
-CHECK:  2.34932847[[\d*]]
-CHECK: 48.86494206[[\d*]]
-
 # Converted to a single point.
 CHECK: "type": "Point"
 
-# Index in decimal as ID.
-CHECK: "id": 622054503278215167
+# longitude first, then latitude.
+CHECK:  2.34932847[[\d*]]
+CHECK: 48.86494206[[\d*]]
 
 # Index in hexadecimal as name.
 CHECK: "name": "8a1fb4662d47fff"
+
+# Index in decimal as ID.
+CHECK: "id": 622054503278215167

@@ -3,7 +3,7 @@
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use geojson::Feature;
-use h3o::CellIndex;
+use h3o::{geom::SolventBuilder, CellIndex};
 use kml::Kml;
 
 /// Converts indexes to (multi)polygon.
@@ -34,11 +34,12 @@ enum Format {
 pub fn run(args: &Args) -> AnyResult<()> {
     let indexes = crate::utils::get_cell_indexes(args.index)
         .collect::<AnyResult<Vec<_>>>()?;
+    let solvent = SolventBuilder::new().build();
 
     match args.format {
         Format::Geojson => {
             let geometry =
-                h3o::geom::dissolve(indexes).context("compute GeoJSON")?;
+                solvent.dissolve(indexes).context("compute GeoJSON")?;
             let feature = Feature {
                 bbox: None,
                 geometry: Some((&geometry).into()),
@@ -64,7 +65,7 @@ pub fn run(args: &Args) -> AnyResult<()> {
             let elements = vec![
                 Kml::Style(style),
                 crate::kml::polygons(
-                    h3o::geom::dissolve(indexes).context("compute polygons")?,
+                    solvent.dissolve(indexes).context("compute polygons")?,
                     style_id,
                 ),
             ];

@@ -1,5 +1,7 @@
 RUN: @cli cellToBoundary -i 8a1fb4662d47fff -f geojson -p
 
+CHECK: "type": "LineString"
+
 CHECK:  2.34951801[[\d*]]
 CHECK: 48.86558561[[\d*]]
 CHECK:  2.34861575[[\d*]]
@@ -15,7 +17,5 @@ CHECK: 48.86510573[[\d*]]
 CHECK:  2.34951801[[\d*]]
 CHECK: 48.86558561[[\d*]]
 
-CHECK: "type": "LineString"
-
-CHECK: "id": 622054503278215167,
 CHECK: "name": "8a1fb4662d47fff"
+CHECK: "id": 622054503278215167
