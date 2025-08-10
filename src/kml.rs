@@ -1,7 +1,7 @@
 use anyhow::{Context, Result as AnyResult};
 use geo_types::{coord, Polygon};
 use h3o::{CellIndex, LatLng};
-use kml::{Kml, KmlDocument, KmlWriter};
+use kml::{types::Folder, Kml, KmlDocument, KmlWriter};
 use maplit::hashmap;
 use std::io;
 
@@ -72,13 +72,13 @@ pub fn print_document(
             "xmlns:kml".to_owned()  => "http://www.opengis.net/kml/2.2".to_owned(),
             "xmlns:atom".to_owned() => "http://www.w3.org/2005/Atom".to_owned(),
         },
-        elements: vec![Kml::Folder {
-            attrs: hashmap! {
-                "name".to_owned()        => name,
-                "description".to_owned() => description,
-            },
+        elements: vec![Kml::Folder(Folder {
+            name: Some(name),
+            description: Some(description),
+            style_url: None,
+            attrs: hashmap! {},
             elements,
-        }],
+        })],
     };
 
     let mut stdout = io::stdout().lock();
@@ -152,7 +152,8 @@ pub fn to_geometry(kml: Kml) -> AnyResult<Option<geo_types::Geometry>> {
             .map(TryInto::try_into)
             .transpose()
             .context("invalid geometry in placemark")?,
-        Kml::Document { elements, .. } | Kml::Folder { elements, .. } => {
+        Kml::Document { elements, .. }
+        | Kml::Folder(Folder { elements, .. }) => {
             Some(geo_types::Geometry::GeometryCollection(
                 geo_types::GeometryCollection(
                     elements

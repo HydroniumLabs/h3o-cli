@@ -407,7 +407,7 @@ checksum = "6fb45e8060378c0353781abf67e1917b545a6b710d0342d85b70c125af7ef320"
 
 [[package]]
 name = "h3o-cli"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "anyhow",
  "clap",
@@ -526,9 +526,9 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "kml"
-version = "0.8.7"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15ee323a0101f0a088261d45379c1127038a0df04991975e76c4ce427b4bfd6d"
+checksum = "ac96b5c2ec7a3e9e472a9b443f189d63728d1b77bf7e359e1f368b9e991322ef"
 dependencies = [
  "geo-types",
  "num-traits",

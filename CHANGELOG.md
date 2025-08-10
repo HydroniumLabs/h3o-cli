@@ -17,6 +17,7 @@ Possible sections are:
 ### Changed
 
 - bump `h3o` to 0.8
+- bump `kml` to 0.10
 
 ## [0.2.6] - 2024-11-28
 
