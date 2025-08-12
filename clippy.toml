@@ -4,6 +4,3 @@
 #
 # See https://nnethercote.github.io/perf-book/type-sizes.html
 enum-variant-size-threshold = 128
-
-# See https://github.com/georust/kml/issues/70
-allowed-duplicate-crates = ["thiserror", "thiserror-impl"]
