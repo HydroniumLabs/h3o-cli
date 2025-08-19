@@ -1,6 +1,6 @@
 //! Expose [`CellIndex::grid_path_cells`]
 
-use anyhow::{ensure, Context, Result as AnyResult};
+use anyhow::{Context, Result as AnyResult, ensure};
 use clap::{ArgGroup, Parser, ValueEnum};
 use either::Either;
 use h3o::CellIndex;

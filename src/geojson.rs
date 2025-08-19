@@ -1,4 +1,4 @@
-use geo_types::{coord, Polygon};
+use geo_types::{LineString, coord};
 use geojson::{Feature, JsonObject, JsonValue};
 use h3o::{CellIndex, LatLng};
 
@@ -7,7 +7,7 @@ pub fn boundaries(indexes: &[CellIndex]) -> Vec<Feature> {
     indexes
         .iter()
         .map(|index| {
-            let (linestring, _) = Polygon::from(*index).into_inner();
+            let linestring: LineString = index.boundary().into();
             let geometry = geojson::Geometry::new((&linestring).into());
             let mut properties = JsonObject::new();
             properties

@@ -3,7 +3,7 @@
 use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use geojson::Feature;
-use h3o::{geom::SolventBuilder, CellIndex};
+use h3o::{CellIndex, geom::SolventBuilder};
 use kml::Kml;
 
 /// Converts indexes to (multi)polygon.

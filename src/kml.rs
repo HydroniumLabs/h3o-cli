@@ -1,7 +1,7 @@
 use anyhow::{Context, Result as AnyResult};
-use geo_types::{coord, Polygon};
+use geo_types::{LineString, coord};
 use h3o::{CellIndex, LatLng};
-use kml::{types::Folder, Kml, KmlDocument, KmlWriter};
+use kml::{Kml, KmlDocument, KmlWriter, types::Folder};
 use maplit::hashmap;
 use std::io;
 
@@ -10,7 +10,7 @@ pub fn boundaries(indexes: &[CellIndex], style: &str) -> Vec<Kml> {
     indexes
         .iter()
         .map(|index| {
-            let (linestring, _) = Polygon::from(*index).into_inner();
+            let linestring: LineString = index.boundary().into();
             let geometry = kml::types::LineString {
                 coords: linestring.0.into_iter().map(Into::into).collect(),
                 tessellate: true,

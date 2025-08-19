@@ -4,8 +4,8 @@ use anyhow::{Context, Result as AnyResult};
 use clap::{Parser, ValueEnum};
 use geo_types::Geometry;
 use h3o::{
-    geom::{ContainmentMode, PlotterBuilder, TilerBuilder},
     LatLng, Resolution,
+    geom::{ContainmentMode, PlotterBuilder, TilerBuilder},
 };
 use kml::{Kml, KmlReader};
 use std::{

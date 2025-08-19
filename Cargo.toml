@@ -1,8 +1,8 @@
 [package]
 name = "h3o-cli"
-version = "0.2.7"
+version = "0.2.8"
 authors = ["Sylvain Laperche <sylvain.laperche@gmail.com>"]
-edition = "2021"
+edition = "2024"
 description = "A CLI app that exposes most of the h3o API for scripting."
 documentation = "https://docs.rs/h3o-cli/"
 readme = "README.md"
@@ -26,7 +26,7 @@ clap = { version = "4.0", default-features = false, features = ["std", "color", 
 either = { version = "1.0", default-features = false }
 geojson = { version = "0.24", default-features = false, features = ["geo-types"] }
 geo-types = { version = "0.7", default-features = false }
-h3o = { version = "0.8", default-features = false, features = ["std", "geo", "serde"] }
+h3o = { version = "0.9", default-features = false, features = ["std", "geo", "serde"] }
 h3o-zip = { version = "0.1", default-features = false }
 kml = { version = "0.11", default-features = false, features = ["geo-types"]}
 maplit = { version = "1.0", default-features = false }
@@ -35,11 +35,6 @@ serde_json = { version = "1.0", default-features = false }
 
 [dev-dependencies]
 lit = { version = "1.0", default-features = false }
-
-[lib]
-# doctests are good for docs, but unfortunately they are slow.
-# Cf. https://matklad.github.io/2021/02/27/delete-cargo-integration-tests.html
-doctest = false
 
 [profile.release]
 strip = true
