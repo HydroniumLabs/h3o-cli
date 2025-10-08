@@ -14,6 +14,10 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixed
+
+- fix missing segment in `cellToBoundary`.
+
 ## [0.2.8] - 2025-08-19
 
 ### Changed

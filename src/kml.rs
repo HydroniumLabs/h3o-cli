@@ -10,7 +10,8 @@ pub fn boundaries(indexes: &[CellIndex], style: &str) -> Vec<Kml> {
     indexes
         .iter()
         .map(|index| {
-            let linestring: LineString = index.boundary().into();
+            let mut linestring: LineString = index.boundary().into();
+            linestring.close();
             let geometry = kml::types::LineString {
                 coords: linestring.0.into_iter().map(Into::into).collect(),
                 tessellate: true,

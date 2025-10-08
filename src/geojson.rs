@@ -7,7 +7,8 @@ pub fn boundaries(indexes: &[CellIndex]) -> Vec<Feature> {
     indexes
         .iter()
         .map(|index| {
-            let linestring: LineString = index.boundary().into();
+            let mut linestring: LineString = index.boundary().into();
+            linestring.close();
             let geometry = geojson::Geometry::new((&linestring).into());
             let mut properties = JsonObject::new();
             properties
