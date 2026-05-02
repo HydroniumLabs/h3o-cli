@@ -105,6 +105,8 @@
     clippy::missing_errors_doc,
     // Used by some subcommands.
     clippy::use_debug,
+    // Buggy: cf. https://github.com/rust-lang/rust-clippy/issues/16440
+    clippy::multiple_crate_versions,
     reason = "allow some exceptions"
 )]
 
