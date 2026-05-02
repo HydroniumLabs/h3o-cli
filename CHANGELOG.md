@@ -14,6 +14,8 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.2.10] - 2026-05-02
+
 ### Changed
 
 - bump `geojson` to 1.0
