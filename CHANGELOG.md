@@ -14,6 +14,11 @@ Possible sections are:
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Changed
+
+- bump `geojson` to 1.0
+- bump `kml` to 0.13
+
 ## [0.2.9] - 2025-10-08
 
 ### Fixed

@@ -1,6 +1,6 @@
 [package]
 name = "h3o-cli"
-version = "0.2.9"
+version = "0.2.10"
 authors = ["Sylvain Laperche <sylvain.laperche@gmail.com>"]
 edition = "2024"
 description = "A CLI app that exposes most of the h3o API for scripting."
@@ -24,11 +24,11 @@ pre-release-replacements = [
 anyhow = { version = "1.0", default-features = false, features = ["std"]}
 clap = { version = "4.0", default-features = false, features = ["std", "color", "help", "usage", "error-context", "suggestions", "derive"] }
 either = { version = "1.0", default-features = false }
-geojson = { version = "0.24", default-features = false, features = ["geo-types"] }
+geojson = { version = "1.0", default-features = false, features = ["geo-types"] }
 geo-types = { version = "0.7", default-features = false }
 h3o = { version = "0.9", default-features = false, features = ["std", "geo", "serde"] }
 h3o-zip = { version = "0.1", default-features = false }
-kml = { version = "0.11", default-features = false, features = ["geo-types"]}
+kml = { version = "0.13", default-features = false, features = ["geo-types"]}
 maplit = { version = "1.0", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_json = { version = "1.0", default-features = false }
